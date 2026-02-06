@@ -5,21 +5,21 @@
 See: .planning/PROJECT.md (updated 2026-02-05)
 
 **Core value:** A visually compelling, fully functional demo that makes the current PDF process look obsolete -- polished enough to pitch to executives and backed by real data persistence.
-**Current focus:** Phase 2 in progress — Database & API (1/3 plans complete)
+**Current focus:** Phase 2 in progress — Database & API (2/3 plans complete)
 
 ## Current Position
 
 Phase: 2 of 7 (Database & API)
-Plan: 1 of 3 in current phase
+Plan: 2 of 3 in current phase
 Status: In progress
-Last activity: 2026-02-06 — Completed 02-01-PLAN.md
+Last activity: 2026-02-06 — Completed 02-02-PLAN.md
 
-Progress: ████░░░░░░ 19%
+Progress: ██████░░░░ 29%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 4
+- Total plans completed: 5
 - Average duration: 4 min
 - Total execution time: 0.3 hours
 
@@ -28,10 +28,10 @@ Progress: ████░░░░░░ 19%
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 1. Foundation | 3/3 | 12 min | 4 min |
-| 2. Database & API | 1/3 | 4 min | 4 min |
+| 2. Database & API | 2/3 | 8 min | 4 min |
 
 **Recent Trend:**
-- Last 5 plans: 3 min, 3 min, 6 min, 4 min
+- Last 5 plans: 3 min, 3 min, 6 min, 4 min, 4 min
 - Trend: —
 
 ## Accumulated Context
@@ -53,6 +53,8 @@ Recent decisions affecting current work:
 | 01-03 | Checkbox inline SVG overlay for checkmark | Self-contained, no extra CSS rules needed |
 | 02-01 | Removed graphql_public from PGRST_DB_SCHEMAS | Schema didn't exist, was blocking PostgREST startup |
 | 02-01 | IF NOT EXISTS on all CREATE TABLE/INDEX | Idempotent migrations for safe re-runs |
+| 02-02 | persistSession: false on Supabase client | Demo app with simulated auth, not real Supabase Auth |
+| 02-02 | db: { schema: 'ecos' } at client level | All queries target ecos schema automatically |
 
 ### Deferred Issues
 
@@ -65,5 +67,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-02-06
-Stopped at: Completed 02-01-PLAN.md — Schema design done, PostgREST serving ecos tables
+Stopped at: Completed 02-02-PLAN.md — Supabase client + 22 API helper functions across 5 modules
 Resume file: None

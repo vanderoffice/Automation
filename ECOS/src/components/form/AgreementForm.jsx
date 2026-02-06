@@ -3,6 +3,7 @@ import { TrackSelector } from './TrackSelector'
 import { EmployeeInfoSection } from './EmployeeInfoSection'
 import { DepartmentInfoSection } from './DepartmentInfoSection'
 import { SecurityContentSection } from './SecurityContentSection'
+import { AcknowledgmentSection } from './AcknowledgmentSection'
 import { securityRequirements, adminResponsibilities } from '../../data/securityRequirements'
 
 function getFiscalYear() {
@@ -23,6 +24,7 @@ function AgreementForm({ currentEmployee }) {
     workPhone: '',
     workLocation: '',
     fiscalYear: getFiscalYear(),
+    acknowledgments: {},
   })
 
   const handleChange = (field) => (e) => {
@@ -35,6 +37,16 @@ function AgreementForm({ currentEmployee }) {
 
   const clearTrack = () => {
     setFormState((prev) => ({ ...prev, track: null }))
+  }
+
+  const handleAcknowledgment = (sectionId) => {
+    setFormState((prev) => ({
+      ...prev,
+      acknowledgments: {
+        ...prev.acknowledgments,
+        [sectionId]: !prev.acknowledgments[sectionId],
+      },
+    }))
   }
 
   // Step 1: Track selection
@@ -79,6 +91,13 @@ function AgreementForm({ currentEmployee }) {
         sections={securityRequirements}
         adminSection={adminResponsibilities}
         showAdminSection={false}
+      />
+      <AcknowledgmentSection
+        sections={securityRequirements}
+        adminSection={adminResponsibilities}
+        showAdminSection={false}
+        acknowledgments={formState.acknowledgments}
+        onChange={handleAcknowledgment}
       />
     </div>
   )

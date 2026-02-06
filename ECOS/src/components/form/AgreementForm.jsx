@@ -2,6 +2,8 @@ import { useState } from 'react'
 import { TrackSelector } from './TrackSelector'
 import { EmployeeInfoSection } from './EmployeeInfoSection'
 import { DepartmentInfoSection } from './DepartmentInfoSection'
+import { SecurityContentSection } from './SecurityContentSection'
+import { securityRequirements, adminResponsibilities } from '../../data/securityRequirements'
 
 function getFiscalYear() {
   const now = new Date()
@@ -73,6 +75,11 @@ function AgreementForm({ currentEmployee }) {
 
       <EmployeeInfoSection currentEmployee={currentEmployee} track={formState.track} />
       <DepartmentInfoSection formState={formState} onChange={handleChange} fiscalYear={formState.fiscalYear} />
+      <SecurityContentSection
+        sections={securityRequirements}
+        adminSection={adminResponsibilities}
+        showAdminSection={false}
+      />
     </div>
   )
 }

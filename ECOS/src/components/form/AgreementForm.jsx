@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import { TrackSelector } from './TrackSelector'
+import { EmployeeInfoSection } from './EmployeeInfoSection'
+import { DepartmentInfoSection } from './DepartmentInfoSection'
 
 function getFiscalYear() {
   const now = new Date()
@@ -69,7 +71,8 @@ function AgreementForm({ currentEmployee }) {
         </h1>
       </div>
 
-      {/* EmployeeInfoSection and DepartmentInfoSection will be wired in Task 2 */}
+      <EmployeeInfoSection currentEmployee={currentEmployee} track={formState.track} />
+      <DepartmentInfoSection formState={formState} onChange={handleChange} fiscalYear={formState.fiscalYear} />
     </div>
   )
 }

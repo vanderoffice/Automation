@@ -238,69 +238,82 @@ function AgreementForm({ currentEmployee }) {
 
     return (
       <div className="max-w-3xl mx-auto space-y-6">
-        <Card>
-          <div className="text-center space-y-4">
-            <div className="flex justify-center">
-              <svg
-                className="w-16 h-16 text-green-500"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <circle cx="12" cy="12" r="10" />
-                <polyline points="9 12 11.5 14.5 16 9" />
-              </svg>
-            </div>
-            <h2 className="text-xl font-bold text-white">
-              Agreement Created Successfully
-            </h2>
-            <div className="text-sm text-neutral-400 space-y-1">
-              <p>Track: {trackLabel}</p>
-              <p>Employee: {employeeName}</p>
-              <p>Fiscal Year: {submitSuccess.fiscal_year}</p>
-              <p>Access groups will be assigned by your manager.</p>
-            </div>
-            {signatureComplete ? (
-              <p className="text-sm text-green-400 font-medium">
-                Submitted and signed. Awaiting manager approval.
-              </p>
-            ) : (
-              <p className="text-sm text-neutral-500">
-                Please sign below to submit your agreement.
-              </p>
-            )}
-          </div>
-        </Card>
-
         {submitError && (
           <Alert variant="error" dismissible onDismiss={() => setSubmitError(null)}>
             {submitError}
           </Alert>
         )}
 
-        {!signatureComplete && (
-          <SignatureBlock
-            signerRole="employee"
-            signerName={employeeName}
-            onSign={handleEmployeeSign}
-          />
-        )}
-
-        {signatureComplete && (
-          <div className="flex items-center justify-center gap-3">
-            <Button variant="secondary" onClick={handleCreateAnother}>
-              Create Another
-            </Button>
-            <Button
-              variant="primary"
-              onClick={() => navigate('/ecosform/workflow')}
-            >
-              View Workflow
-            </Button>
-          </div>
+        {signatureComplete ? (
+          <>
+            <Card>
+              <div className="text-center space-y-4">
+                <div className="flex justify-center">
+                  <svg
+                    className="w-16 h-16 text-green-500"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <circle cx="12" cy="12" r="10" />
+                    <polyline points="9 12 11.5 14.5 16 9" />
+                  </svg>
+                </div>
+                <h2 className="text-xl font-bold text-white">
+                  Agreement Submitted
+                </h2>
+                <div className="text-sm text-neutral-400 space-y-1">
+                  <p>{trackLabel} &middot; FY {submitSuccess.fiscal_year}</p>
+                  <p>Signed by {employeeName}</p>
+                </div>
+                <p className="text-sm text-green-400 font-medium">
+                  Awaiting manager approval.
+                </p>
+              </div>
+            </Card>
+            <div className="flex items-center justify-center gap-3">
+              <Button variant="secondary" onClick={handleCreateAnother}>
+                Create Another
+              </Button>
+              <Button
+                variant="primary"
+                onClick={() => navigate('/ecosform/workflow')}
+              >
+                View Workflow
+              </Button>
+            </div>
+          </>
+        ) : (
+          <>
+            <Card>
+              <div className="flex items-center gap-4 p-1">
+                <div className="flex-shrink-0">
+                  <div className="w-12 h-12 rounded-full bg-orange-500/15 flex items-center justify-center">
+                    <svg className="w-6 h-6 text-orange-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
+                      <path d="m15 5 4 4" />
+                    </svg>
+                  </div>
+                </div>
+                <div>
+                  <h2 className="text-lg font-bold text-white">
+                    Sign Your Agreement
+                  </h2>
+                  <p className="text-sm text-neutral-400">
+                    {trackLabel} &middot; FY {submitSuccess.fiscal_year} &middot; {employeeName}
+                  </p>
+                </div>
+              </div>
+            </Card>
+            <SignatureBlock
+              signerRole="employee"
+              signerName={employeeName}
+              onSign={handleEmployeeSign}
+            />
+          </>
         )}
       </div>
     )

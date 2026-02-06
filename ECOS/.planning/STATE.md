@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-05)
 
 **Core value:** A visually compelling, fully functional demo that makes the current PDF process look obsolete -- polished enough to pitch to executives and backed by real data persistence.
-**Current focus:** Phase 3 in progress — Form UI (1/3 plans done). Form shell with track selection and employee info built.
+**Current focus:** Phase 3 in progress — Form UI (2/3 plans done). Security content with collapsible sections and acknowledgment checkboxes built.
 
 ## Current Position
 
 Phase: 3 of 7 (Form UI)
-Plan: 1 of 3 in current phase
+Plan: 2 of 3 in current phase
 Status: In progress
-Last activity: 2026-02-06 — Completed 03-01-PLAN.md
+Last activity: 2026-02-06 — Completed 03-02-PLAN.md
 
-Progress: █████████░░░░░░░░░░░ 33%
+Progress: ██████████░░░░░░░░░░ 38%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 7
+- Total plans completed: 8
 - Average duration: 5 min
-- Total execution time: 0.5 hours
+- Total execution time: 0.6 hours
 
 **By Phase:**
 
@@ -29,10 +29,10 @@ Progress: █████████░░░░░░░░░░░ 33%
 |-------|-------|-------|----------|
 | 1. Foundation | 3/3 | 12 min | 4 min |
 | 2. Database & API | 3/3 | 18 min | 6 min |
-| 3. Form UI | 1/3 | 2 min | 2 min |
+| 3. Form UI | 2/3 | 8 min | 4 min |
 
 **Recent Trend:**
-- Last 5 plans: 6 min, 4 min, 4 min, 10 min, 2 min
+- Last 5 plans: 4 min, 4 min, 10 min, 2 min, 6 min
 - Trend: —
 
 ## Accumulated Context
@@ -62,6 +62,9 @@ Recent decisions affecting current work:
 | 03-01 | Separate form/ directory from ui/ | Form-specific components distinct from reusable design system |
 | 03-01 | Curried handleChange(field) pattern | Clean, scalable for adding fields in later plans |
 | 03-01 | Employee info as styled text, not inputs | Never user-editable, sourced from employee record |
+| 03-02 | Separate data file for security requirements | Content is data, not UI — reusable across SecurityContent and Acknowledgment |
+| 03-02 | onOpen callback on CollapsibleSection | Parent tracks "ever opened" without lifting accordion state |
+| 03-02 | BulletList local helper, not separate file | Avoids duplication without over-abstracting |
 
 ### Deferred Issues
 
@@ -74,5 +77,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-02-06
-Stopped at: Completed 03-01-PLAN.md — Form shell with track selector, employee info, and department fields. Ready for 03-02 (security content).
+Stopped at: Completed 03-02-PLAN.md — Security requirements content in collapsible sections with acknowledgment checkboxes. Ready for 03-03 (access groups and validation).
 Resume file: None

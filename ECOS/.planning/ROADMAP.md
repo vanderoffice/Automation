@@ -10,7 +10,7 @@ None
 
 ## Phases
 
-- [ ] **Phase 1: Foundation** - Project scaffolding, Docker config, Tailwind design system, dev environment
+- [ ] **Phase 1: Foundation** *(In progress)* - Project scaffolding, Docker config, Tailwind design system, dev environment
 - [ ] **Phase 2: Database & API** - Supabase schema, PostgREST endpoints, RLS policies
 - [ ] **Phase 3: Form UI** - Agreement form with both tracks, security content, access groups
 - [ ] **Phase 4: Signature Workflow** - Three-party signing flow, audit metadata, typed-name signatures
@@ -27,7 +27,7 @@ None
 **Plans**: TBD
 
 Plans:
-- [ ] 01-01: Project scaffolding — package.json, Docker setup, Tailwind config with design tokens
+- [x] 01-01: Project scaffolding — package.json, Docker setup, Tailwind config with design tokens
 - [ ] 01-02: Base layout shell — app chrome, navigation skeleton, responsive container
 - [ ] 01-03: Design system components — buttons, cards, inputs, status badges matching vanderdev.net
 
@@ -106,7 +106,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 
 | Phase | Plans Complete | Status | Completed |
 |-------|---------------|--------|-----------|
-| 1. Foundation | 0/3 | Not started | - |
+| 1. Foundation | 1/3 | In progress | - |
 | 2. Database & API | 0/3 | Not started | - |
 | 3. Form UI | 0/3 | Not started | - |
 | 4. Signature Workflow | 0/3 | Not started | - |

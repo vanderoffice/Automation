@@ -4,6 +4,7 @@ import { EmployeeInfoSection } from './EmployeeInfoSection'
 import { DepartmentInfoSection } from './DepartmentInfoSection'
 import { SecurityContentSection } from './SecurityContentSection'
 import { AcknowledgmentSection } from './AcknowledgmentSection'
+import { AccessGroupSection } from './AccessGroupSection'
 import { securityRequirements, adminResponsibilities } from '../../data/securityRequirements'
 
 function getFiscalYear() {
@@ -25,6 +26,7 @@ function AgreementForm({ currentEmployee }) {
     workLocation: '',
     fiscalYear: getFiscalYear(),
     acknowledgments: {},
+    selectedGroups: [],
   })
 
   const handleChange = (field) => (e) => {
@@ -32,7 +34,10 @@ function AgreementForm({ currentEmployee }) {
   }
 
   const setTrack = (track) => {
-    setFormState((prev) => ({ ...prev, track }))
+    const selectedGroups = track === 'annual_renewal'
+      ? ['ecos_user', 'personnel_transactions']
+      : []
+    setFormState((prev) => ({ ...prev, track, selectedGroups }))
   }
 
   const clearTrack = () => {
@@ -48,6 +53,20 @@ function AgreementForm({ currentEmployee }) {
       },
     }))
   }
+
+  const handleGroupToggle = (groupId) => {
+    setFormState((prev) => {
+      const groups = prev.selectedGroups.includes(groupId)
+        ? prev.selectedGroups.filter((id) => id !== groupId)
+        : [...prev.selectedGroups, groupId]
+      return { ...prev, selectedGroups: groups }
+    })
+  }
+
+  // Determine if admin section should be shown based on elevated group selection
+  const showAdminSection =
+    formState.selectedGroups.includes('system_admin') ||
+    formState.selectedGroups.includes('audit_compliance')
 
   // Step 1: Track selection
   if (!formState.track) {
@@ -90,14 +109,19 @@ function AgreementForm({ currentEmployee }) {
       <SecurityContentSection
         sections={securityRequirements}
         adminSection={adminResponsibilities}
-        showAdminSection={false}
+        showAdminSection={showAdminSection}
       />
       <AcknowledgmentSection
         sections={securityRequirements}
         adminSection={adminResponsibilities}
-        showAdminSection={false}
+        showAdminSection={showAdminSection}
         acknowledgments={formState.acknowledgments}
         onChange={handleAcknowledgment}
+      />
+      <AccessGroupSection
+        selectedGroups={formState.selectedGroups}
+        onChange={handleGroupToggle}
+        track={formState.track}
       />
     </div>
   )

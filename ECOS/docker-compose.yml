@@ -8,6 +8,8 @@ services:
     volumes:
       - ./src:/app/src
       - ./index.html:/app/index.html
+    env_file:
+      - .env.local
     environment:
       - NODE_ENV=development
 

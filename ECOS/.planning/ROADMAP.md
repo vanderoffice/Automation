@@ -62,7 +62,7 @@ Plans:
 
 Plans:
 - [x] 04-01: Signature component — typed-name input, certification checkbox, audit metadata capture
-- [ ] 04-02: Workflow engine — state machine for Employee → Manager → Admin transitions, status tracking
+- [x] 04-02: Workflow engine — state machine for Employee → Manager → Admin transitions, status tracking
 - [ ] 04-03: Workflow UI — pending/completed states, signature timeline, workflow status indicators
 
 ### Phase 5: Role Switcher & Demo
@@ -109,7 +109,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 | 1. Foundation | 3/3 | Complete | 2026-02-06 |
 | 2. Database & API | 3/3 | Complete | 2026-02-06 |
 | 3. Form UI | 3/3 | Complete | 2026-02-06 |
-| 4. Signature Workflow | 1/3 | In progress | - |
+| 4. Signature Workflow | 2/3 | In progress | - |
 | 5. Role Switcher & Demo | 0/3 | Not started | - |
 | 6. Admin Dashboard | 0/3 | Not started | - |
 | 7. Deployment & Polish | 0/3 | Not started | - |

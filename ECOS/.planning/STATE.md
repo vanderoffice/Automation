@@ -5,21 +5,21 @@
 See: .planning/PROJECT.md (updated 2026-02-05)
 
 **Core value:** A visually compelling, fully functional demo that makes the current PDF process look obsolete -- polished enough to pitch to executives and backed by real data persistence.
-**Current focus:** Phase 4 in progress — Signature Workflow. SignatureBlock component and audit metadata utility built. Next: workflow engine (04-02).
+**Current focus:** Phase 4 in progress — Signature Workflow. Employee signing integrated into form submission flow. Next: workflow UI (04-03).
 
 ## Current Position
 
 Phase: 4 of 7 (Signature Workflow)
-Plan: 1 of 3 in current phase
+Plan: 2 of 3 in current phase
 Status: In progress
-Last activity: 2026-02-06 — Completed 04-01-PLAN.md
+Last activity: 2026-02-06 — Completed 04-02-PLAN.md
 
-Progress: ██████████████░░░░░░ 48%
+Progress: ███████████████░░░░░ 52%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 10
+- Total plans completed: 11
 - Average duration: 5 min
 - Total execution time: 0.7 hours
 
@@ -30,10 +30,10 @@ Progress: ██████████████░░░░░░ 48%
 | 1. Foundation | 3/3 | 12 min | 4 min |
 | 2. Database & API | 3/3 | 18 min | 6 min |
 | 3. Form UI | 3/3 | 15 min | 5 min |
-| 4. Signature Workflow | 1/3 | 2 min | 2 min |
+| 4. Signature Workflow | 2/3 | 4 min | 2 min |
 
 **Recent Trend:**
-- Last 5 plans: 10 min, 2 min, 6 min, 7 min, 2 min
+- Last 5 plans: 2 min, 10 min, 2 min, 6 min, 7 min
 - Trend: —
 
 ## Accumulated Context
@@ -72,6 +72,8 @@ Recent decisions affecting current work:
 | 04-01 | ip_address null client-side | Server-side population only for honest audit trails |
 | 04-01 | Session hash via crypto.subtle.digest | Raw UUID never exposed outside sessionStorage |
 | 04-01 | Sub-component pattern for SignatureBlock states | Clean separation of active/disabled/signed rendering |
+| 04-02 | Inline signing after submit | Employee signs immediately on success screen, no separate page |
+| 04-02 | Error isolation on signature failure | Signature failure doesn't lose the created agreement |
 
 ### Deferred Issues
 
@@ -84,5 +86,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-02-06
-Stopped at: Completed 04-01-PLAN.md — SignatureBlock component and audit metadata utility built. Ready for 04-02 (workflow engine).
+Stopped at: Completed 04-02-PLAN.md — Employee signing integrated into form submission flow. Ready for 04-03 (workflow UI).
 Resume file: None

@@ -18,4 +18,5 @@ services:
 
 networks:
   nginx-proxy:
+    name: n8n-cloud-stack_frontend
     external: true

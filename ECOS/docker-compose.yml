@@ -1,0 +1,23 @@
+services:
+  ecos-dev:
+    build:
+      context: .
+      target: dev
+    ports:
+      - "5180:5180"
+    volumes:
+      - ./src:/app/src
+      - ./index.html:/app/index.html
+    environment:
+      - NODE_ENV=development
+
+  ecos-prod:
+    build:
+      context: .
+      target: production
+    ports:
+      - "8080:80"
+    labels:
+      - "VIRTUAL_HOST=vanderdev.net"
+      - "VIRTUAL_PATH=/ecosform"
+      - "LETSENCRYPT_HOST=vanderdev.net"

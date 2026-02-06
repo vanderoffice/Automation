@@ -5,21 +5,21 @@
 See: .planning/PROJECT.md (updated 2026-02-05)
 
 **Core value:** A visually compelling, fully functional demo that makes the current PDF process look obsolete -- polished enough to pitch to executives and backed by real data persistence.
-**Current focus:** Phase 3 complete — Form UI done (3/3 plans). Full agreement form with access groups, validation, and Supabase submission. Ready for Phase 4: Signature Workflow.
+**Current focus:** Phase 4 in progress — Signature Workflow. SignatureBlock component and audit metadata utility built. Next: workflow engine (04-02).
 
 ## Current Position
 
-Phase: 3 of 7 (Form UI) — Complete
-Plan: 3 of 3 in current phase
-Status: Phase complete
-Last activity: 2026-02-06 — Completed 03-03-PLAN.md
+Phase: 4 of 7 (Signature Workflow)
+Plan: 1 of 3 in current phase
+Status: In progress
+Last activity: 2026-02-06 — Completed 04-01-PLAN.md
 
-Progress: █████████████░░░░░░░ 43%
+Progress: ██████████████░░░░░░ 48%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 9
+- Total plans completed: 10
 - Average duration: 5 min
 - Total execution time: 0.7 hours
 
@@ -30,9 +30,10 @@ Progress: █████████████░░░░░░░ 43%
 | 1. Foundation | 3/3 | 12 min | 4 min |
 | 2. Database & API | 3/3 | 18 min | 6 min |
 | 3. Form UI | 3/3 | 15 min | 5 min |
+| 4. Signature Workflow | 1/3 | 2 min | 2 min |
 
 **Recent Trend:**
-- Last 5 plans: 4 min, 10 min, 2 min, 6 min, 7 min
+- Last 5 plans: 10 min, 2 min, 6 min, 7 min, 2 min
 - Trend: —
 
 ## Accumulated Context
@@ -68,6 +69,9 @@ Recent decisions affecting current work:
 | 03-03 | Flat 5-group access list (no categories) | User feedback: categorized layout was too complex for streamlined demo |
 | 03-03 | system_admin triggers admin section | Only meaningful conditional — real operational logic preserved |
 | 03-03 | Two-step DB write (agreement → groups) | Simple API helpers, acceptable for demo |
+| 04-01 | ip_address null client-side | Server-side population only for honest audit trails |
+| 04-01 | Session hash via crypto.subtle.digest | Raw UUID never exposed outside sessionStorage |
+| 04-01 | Sub-component pattern for SignatureBlock states | Clean separation of active/disabled/signed rendering |
 
 ### Deferred Issues
 
@@ -80,5 +84,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-02-06
-Stopped at: Completed 03-03-PLAN.md — Phase 3 complete. Agreement form with access groups, validation, and Supabase submission working end-to-end. Ready for Phase 4 (Signature Workflow).
+Stopped at: Completed 04-01-PLAN.md — SignatureBlock component and audit metadata utility built. Ready for 04-02 (workflow engine).
 Resume file: None

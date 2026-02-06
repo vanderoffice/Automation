@@ -25,7 +25,7 @@ export default function AgreementPage() {
 
   return (
     <div className="animate-in">
-      <AgreementForm currentEmployee={currentEmployee} />
+      <AgreementForm key={currentEmployee.id} currentEmployee={currentEmployee} />
     </div>
   )
 }

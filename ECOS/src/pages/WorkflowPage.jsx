@@ -214,7 +214,7 @@ function AgreementCard({ agreement, signatures, role, currentEmployee, onSignCom
 }
 
 export default function WorkflowPage() {
-  const { currentEmployee, role, departmentId, employees, switchRole, loading: roleLoading } = useRole()
+  const { currentEmployee, role, loading: roleLoading } = useRole()
   const [agreements, setAgreements] = useState([])
   const [signaturesMap, setSignaturesMap] = useState({})
   const [loading, setLoading] = useState(true)
@@ -296,26 +296,12 @@ export default function WorkflowPage() {
   return (
     <div className="animate-in">
       <h1 className="text-2xl font-bold text-white mb-2">Workflow Status</h1>
-      <div className="flex items-center justify-between mb-8">
-        <p className="text-neutral-400">
-          Viewing as <span className="text-white font-medium">{roleLabel}</span>
-          {currentEmployee && (
-            <span> &mdash; {currentEmployee.first_name} {currentEmployee.last_name}</span>
-          )}
-        </p>
-        {/* Temporary role switcher — replaced by global switcher in Phase 5 */}
-        <select
-          value={currentEmployee?.id || ''}
-          onChange={(e) => switchRole(e.target.value)}
-          className="bg-neutral-900 border border-neutral-700 text-neutral-300 text-sm rounded px-3 py-1.5 focus:outline-none focus:border-orange-500"
-        >
-          {employees.map((emp) => (
-            <option key={emp.id} value={emp.id}>
-              {emp.first_name} {emp.last_name} ({emp.role})
-            </option>
-          ))}
-        </select>
-      </div>
+      <p className="text-neutral-400 mb-8">
+        Viewing as <span className="text-white font-medium">{roleLabel}</span>
+        {currentEmployee && (
+          <span> &mdash; {currentEmployee.first_name} {currentEmployee.last_name}</span>
+        )}
+      </p>
 
       {loading ? (
         <Card>

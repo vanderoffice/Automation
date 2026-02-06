@@ -95,10 +95,8 @@ function AgreementForm({ currentEmployee }) {
     })
   }
 
-  // Determine if admin section should be shown based on elevated group selection
-  const showAdminSection =
-    formState.selectedGroups.includes('system_admin') ||
-    formState.selectedGroups.includes('audit_compliance')
+  // Show admin responsibilities when System Administration access is selected
+  const showAdminSection = formState.selectedGroups.includes('system_admin')
 
   const allSections = showAdminSection
     ? [...securityRequirements, adminResponsibilities]

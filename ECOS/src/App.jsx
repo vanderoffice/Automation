@@ -1,16 +1,19 @@
-function App() {
+import { Routes, Route, Navigate } from 'react-router-dom'
+import Layout from './components/Layout'
+import AgreementPage from './pages/AgreementPage'
+import WorkflowPage from './pages/WorkflowPage'
+import DashboardPage from './pages/DashboardPage'
+
+export default function App() {
   return (
-    <div className="min-h-screen bg-brand-bg flex items-center justify-center">
-      <div className="text-center animate-in">
-        <h1 className="text-4xl font-bold text-brand-accent glow-text mb-4">
-          ECOS Security Agreement
-        </h1>
-        <p className="text-neutral-400 text-lg">
-          CalHR Form Modernization Demo
-        </p>
-      </div>
-    </div>
+    <Routes>
+      <Route element={<Layout />}>
+        <Route index element={<Navigate to="/agreement" replace />} />
+        <Route path="agreement" element={<AgreementPage />} />
+        <Route path="workflow" element={<WorkflowPage />} />
+        <Route path="dashboard" element={<DashboardPage />} />
+        <Route path="*" element={<Navigate to="/agreement" replace />} />
+      </Route>
+    </Routes>
   )
 }
-
-export default App

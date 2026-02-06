@@ -1,0 +1,21 @@
+services:
+  ecos-prod:
+    build:
+      context: .
+      target: production
+      args:
+        VITE_SUPABASE_URL: ${VITE_SUPABASE_URL}
+        VITE_SUPABASE_ANON_KEY: ${VITE_SUPABASE_ANON_KEY}
+    container_name: ecos-form
+    restart: unless-stopped
+    labels:
+      - "VIRTUAL_HOST=vanderdev.net"
+      - "VIRTUAL_PATH=/ecosform"
+      - "VIRTUAL_DEST=/"
+      - "LETSENCRYPT_HOST=vanderdev.net"
+    networks:
+      - nginx-proxy
+
+networks:
+  nginx-proxy:
+    external: true

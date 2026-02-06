@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Outlet } from 'react-router-dom'
 import Sidebar, { MobileNav } from './Sidebar'
+import DemoBanner from './DemoBanner'
 
 export default function Layout() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -47,6 +48,7 @@ export default function Layout() {
         {/* Page Content */}
         <div className="p-4 md:p-8">
           <div className="max-w-7xl mx-auto">
+            <DemoBanner />
             <Outlet />
           </div>
         </div>

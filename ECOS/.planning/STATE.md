@@ -5,21 +5,21 @@
 See: .planning/PROJECT.md (updated 2026-02-05)
 
 **Core value:** A visually compelling, fully functional demo that makes the current PDF process look obsolete -- polished enough to pitch to executives and backed by real data persistence.
-**Current focus:** Phase 2 complete — Database & API (3/3 plans done). Ready for Phase 3.
+**Current focus:** Phase 3 in progress — Form UI (1/3 plans done). Form shell with track selection and employee info built.
 
 ## Current Position
 
-Phase: 2 of 7 (Database & API) — COMPLETE
-Plan: 3 of 3 in current phase
-Status: Phase complete
-Last activity: 2026-02-06 — Completed 02-03-PLAN.md
+Phase: 3 of 7 (Form UI)
+Plan: 1 of 3 in current phase
+Status: In progress
+Last activity: 2026-02-06 — Completed 03-01-PLAN.md
 
-Progress: ███████░░░ 29%
+Progress: █████████░░░░░░░░░░░ 33%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 6
+- Total plans completed: 7
 - Average duration: 5 min
 - Total execution time: 0.5 hours
 
@@ -29,9 +29,10 @@ Progress: ███████░░░ 29%
 |-------|-------|-------|----------|
 | 1. Foundation | 3/3 | 12 min | 4 min |
 | 2. Database & API | 3/3 | 18 min | 6 min |
+| 3. Form UI | 1/3 | 2 min | 2 min |
 
 **Recent Trend:**
-- Last 5 plans: 3 min, 6 min, 4 min, 4 min, 10 min
+- Last 5 plans: 6 min, 4 min, 4 min, 10 min, 2 min
 - Trend: —
 
 ## Accumulated Context
@@ -58,6 +59,9 @@ Recent decisions affecting current work:
 | 02-03 | Demo-permissive RLS policies | anon gets full access; production patterns in SQL comments |
 | 02-03 | Role filtering at API layer, not RLS | getAgreementsForRole filters by role param; simpler for demo |
 | 02-03 | localStorage for selected employee ID | Persists demo role across page reloads |
+| 03-01 | Separate form/ directory from ui/ | Form-specific components distinct from reusable design system |
+| 03-01 | Curried handleChange(field) pattern | Clean, scalable for adding fields in later plans |
+| 03-01 | Employee info as styled text, not inputs | Never user-editable, sourced from employee record |
 
 ### Deferred Issues
 
@@ -70,5 +74,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-02-06
-Stopped at: Completed 02-03-PLAN.md — Phase 2 complete. RLS on all tables, 8 employees seeded, role context with switchable identity, full stack proven.
+Stopped at: Completed 03-01-PLAN.md — Form shell with track selector, employee info, and department fields. Ready for 03-02 (security content).
 Resume file: None

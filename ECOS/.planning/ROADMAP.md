@@ -50,7 +50,7 @@ Plans:
 **Plans**: TBD
 
 Plans:
-- [ ] 03-01: Form structure — track selection (New/Updated vs Annual Renewal), employee info fields, department fields
+- [x] 03-01: Form structure — track selection (New/Updated vs Annual Renewal), employee info fields, department fields
 - [ ] 03-02: Security agreement content — streamlined display of security requirements, acknowledgment sections
 - [ ] 03-03: Access groups and validation — ECOS user group checkboxes, form validation, error states
 
@@ -108,7 +108,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 |-------|---------------|--------|-----------|
 | 1. Foundation | 3/3 | Complete | 2026-02-06 |
 | 2. Database & API | 3/3 | Complete | 2026-02-06 |
-| 3. Form UI | 0/3 | Not started | - |
+| 3. Form UI | 1/3 | In progress | - |
 | 4. Signature Workflow | 0/3 | Not started | - |
 | 5. Role Switcher & Demo | 0/3 | Not started | - |
 | 6. Admin Dashboard | 0/3 | Not started | - |

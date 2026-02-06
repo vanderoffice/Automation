@@ -280,7 +280,7 @@ function AgreementForm({ currentEmployee }) {
               </Button>
               <Button
                 variant="primary"
-                onClick={() => navigate('/ecosform/workflow')}
+                onClick={() => navigate('/workflow')}
               >
                 View Workflow
               </Button>

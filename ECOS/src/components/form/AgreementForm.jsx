@@ -11,8 +11,12 @@ import { Card } from '../ui/Card'
 import { Button } from '../ui/Button'
 import { Alert } from '../ui/Alert'
 import { securityRequirements, adminResponsibilities } from '../../data/securityRequirements'
+import { SignatureBlock } from './SignatureBlock'
 import { createAgreement } from '../../lib/api/agreements'
 import { saveAccessGroups } from '../../lib/api/accessGroups'
+import { submitForSignature, advanceWorkflow } from '../../lib/api/workflow'
+import { createSignature } from '../../lib/api/signatures'
+import { logAction } from '../../lib/api/audit'
 
 function getFiscalYear() {
   const now = new Date()
@@ -43,6 +47,7 @@ function AgreementForm({ currentEmployee }) {
   const [errors, setErrors] = useState({})
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitSuccess, setSubmitSuccess] = useState(null)
+  const [signatureComplete, setSignatureComplete] = useState(false)
   const [submitError, setSubmitError] = useState(null)
   const [draftSaved, setDraftSaved] = useState(false)
 
@@ -168,6 +173,14 @@ function AgreementForm({ currentEmployee }) {
       return
     }
 
+    const { error: workflowError } = await submitForSignature(agreement.id)
+
+    if (workflowError) {
+      setSubmitError('Agreement created but failed to submit for signature: ' + workflowError.message)
+      setIsSubmitting(false)
+      return
+    }
+
     setIsSubmitting(false)
     setSubmitSuccess(agreement)
   }
@@ -214,6 +227,7 @@ function AgreementForm({ currentEmployee }) {
     setFormState(getInitialState())
     setErrors({})
     setSubmitSuccess(null)
+    setSignatureComplete(false)
     setSubmitError(null)
   }
 
@@ -234,10 +248,45 @@ function AgreementForm({ currentEmployee }) {
     )
   }
 
-  // Success state
+  // Success state — employee signing flow
   if (submitSuccess) {
     const trackLabel =
       submitSuccess.track === 'new_updated' ? 'New / Updated User' : 'Annual Renewal'
+    const employeeName = currentEmployee?.first_name + ' ' + currentEmployee?.last_name
+
+    async function handleEmployeeSign(signatureData) {
+      try {
+        const { error: sigError } = await createSignature({
+          agreement_id: submitSuccess.id,
+          signer_id: currentEmployee.id,
+          signer_role: 'employee',
+          ...signatureData,
+        })
+
+        if (sigError) {
+          setSubmitError('Failed to record signature: ' + sigError.message)
+          return
+        }
+
+        const { error: advanceError } = await advanceWorkflow(submitSuccess.id, {
+          signer_role: 'employee',
+        })
+
+        if (advanceError) {
+          setSubmitError('Signature recorded but failed to advance workflow: ' + advanceError.message)
+          return
+        }
+
+        await logAction(submitSuccess.id, currentEmployee.id, 'signed', {
+          role: 'employee',
+          typed_name: signatureData.typed_name,
+        })
+
+        setSignatureComplete(true)
+      } catch (err) {
+        setSubmitError('An unexpected error occurred during signing: ' + err.message)
+      }
+    }
 
     return (
       <div className="max-w-3xl mx-auto space-y-6">
@@ -262,26 +311,49 @@ function AgreementForm({ currentEmployee }) {
             </h2>
             <div className="text-sm text-neutral-400 space-y-1">
               <p>Track: {trackLabel}</p>
-              <p>Employee: {currentEmployee?.first_name + ' ' + currentEmployee?.last_name}</p>
+              <p>Employee: {employeeName}</p>
               <p>Fiscal Year: {submitSuccess.fiscal_year}</p>
               <p>Access Groups: {formState.selectedGroups.length}</p>
             </div>
-            <p className="text-sm text-neutral-500">
-              Your agreement has been saved as a draft.
-            </p>
-            <div className="flex items-center justify-center gap-3 pt-2">
-              <Button variant="secondary" onClick={handleCreateAnother}>
-                Create Another
-              </Button>
-              <Button
-                variant="primary"
-                onClick={() => navigate('/ecosform/workflow')}
-              >
-                View Workflow
-              </Button>
-            </div>
+            {signatureComplete ? (
+              <p className="text-sm text-green-400 font-medium">
+                Submitted and signed. Awaiting manager approval.
+              </p>
+            ) : (
+              <p className="text-sm text-neutral-500">
+                Please sign below to submit your agreement.
+              </p>
+            )}
           </div>
         </Card>
+
+        {submitError && (
+          <Alert variant="error" dismissible onDismiss={() => setSubmitError(null)}>
+            {submitError}
+          </Alert>
+        )}
+
+        {!signatureComplete && (
+          <SignatureBlock
+            signerRole="employee"
+            signerName={employeeName}
+            onSign={handleEmployeeSign}
+          />
+        )}
+
+        {signatureComplete && (
+          <div className="flex items-center justify-center gap-3">
+            <Button variant="secondary" onClick={handleCreateAnother}>
+              Create Another
+            </Button>
+            <Button
+              variant="primary"
+              onClick={() => navigate('/ecosform/workflow')}
+            >
+              View Workflow
+            </Button>
+          </div>
+        )}
       </div>
     )
   }

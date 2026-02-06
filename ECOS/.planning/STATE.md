@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-05)
 
 **Core value:** A visually compelling, fully functional demo that makes the current PDF process look obsolete -- polished enough to pitch to executives and backed by real data persistence.
-**Current focus:** Phase 3 in progress — Form UI (2/3 plans done). Security content with collapsible sections and acknowledgment checkboxes built.
+**Current focus:** Phase 3 complete — Form UI done (3/3 plans). Full agreement form with access groups, validation, and Supabase submission. Ready for Phase 4: Signature Workflow.
 
 ## Current Position
 
-Phase: 3 of 7 (Form UI)
-Plan: 2 of 3 in current phase
-Status: In progress
-Last activity: 2026-02-06 — Completed 03-02-PLAN.md
+Phase: 3 of 7 (Form UI) — Complete
+Plan: 3 of 3 in current phase
+Status: Phase complete
+Last activity: 2026-02-06 — Completed 03-03-PLAN.md
 
-Progress: ██████████░░░░░░░░░░ 38%
+Progress: █████████████░░░░░░░ 43%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 8
+- Total plans completed: 9
 - Average duration: 5 min
-- Total execution time: 0.6 hours
+- Total execution time: 0.7 hours
 
 **By Phase:**
 
@@ -29,10 +29,10 @@ Progress: ██████████░░░░░░░░░░ 38%
 |-------|-------|-------|----------|
 | 1. Foundation | 3/3 | 12 min | 4 min |
 | 2. Database & API | 3/3 | 18 min | 6 min |
-| 3. Form UI | 2/3 | 8 min | 4 min |
+| 3. Form UI | 3/3 | 15 min | 5 min |
 
 **Recent Trend:**
-- Last 5 plans: 4 min, 4 min, 10 min, 2 min, 6 min
+- Last 5 plans: 4 min, 10 min, 2 min, 6 min, 7 min
 - Trend: —
 
 ## Accumulated Context
@@ -65,6 +65,9 @@ Recent decisions affecting current work:
 | 03-02 | Separate data file for security requirements | Content is data, not UI — reusable across SecurityContent and Acknowledgment |
 | 03-02 | onOpen callback on CollapsibleSection | Parent tracks "ever opened" without lifting accordion state |
 | 03-02 | BulletList local helper, not separate file | Avoids duplication without over-abstracting |
+| 03-03 | Flat 5-group access list (no categories) | User feedback: categorized layout was too complex for streamlined demo |
+| 03-03 | system_admin triggers admin section | Only meaningful conditional — real operational logic preserved |
+| 03-03 | Two-step DB write (agreement → groups) | Simple API helpers, acceptable for demo |
 
 ### Deferred Issues
 
@@ -77,5 +80,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-02-06
-Stopped at: Completed 03-02-PLAN.md — Security requirements content in collapsible sections with acknowledgment checkboxes. Ready for 03-03 (access groups and validation).
+Stopped at: Completed 03-03-PLAN.md — Phase 3 complete. Agreement form with access groups, validation, and Supabase submission working end-to-end. Ready for Phase 4 (Signature Workflow).
 Resume file: None

@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-05)
 
 **Core value:** A visually compelling, fully functional demo that makes the current PDF process look obsolete -- polished enough to pitch to executives and backed by real data persistence.
-**Current focus:** Phase 5 in progress — Role Switcher UI (05-01) and Demo Data Seeding (05-02) done. 13 agreements across all workflow states, reset script ready. Next: 05-03 (Demo Polish).
+**Current focus:** Phase 5 complete — Role switcher, demo data, and polish layer all done. Demo is exec-presentation ready. Next: Phase 6 (Admin Dashboard).
 
 ## Current Position
 
 Phase: 5 of 7 (Role Switcher & Demo)
-Plan: 2 of 3 in current phase
-Status: In progress
-Last activity: 2026-02-06 — Completed 05-02-PLAN.md
+Plan: 3 of 3 in current phase
+Status: Phase complete
+Last activity: 2026-02-06 — Completed 05-03-PLAN.md
 
-Progress: ██████████████████░░ 67%
+Progress: ███████████████████░ 71%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 14
-- Average duration: 7 min
-- Total execution time: 1.5 hours
+- Total plans completed: 15
+- Average duration: 8 min
+- Total execution time: 2 hours
 
 **By Phase:**
 
@@ -31,10 +31,10 @@ Progress: ██████████████████░░ 67%
 | 2. Database & API | 3/3 | 18 min | 6 min |
 | 3. Form UI | 3/3 | 15 min | 5 min |
 | 4. Signature Workflow | 3/3 | 45 min | 15 min |
-| 5. Role Switcher & Demo | 2/3 | 9 min | 5 min |
+| 5. Role Switcher & Demo | 3/3 | 39 min | 13 min |
 
 **Recent Trend:**
-- Last 5 plans: 6 min, 7 min, 41 min, 2 min, 7 min
+- Last 5 plans: 7 min, 41 min, 2 min, 7 min, 30 min
 - Trend: —
 
 ## Accumulated Context
@@ -81,6 +81,8 @@ Recent decisions affecting current work:
 | 05-01 | Self-contained RoleSwitcher | Sidebar doesn't import useRole, component manages own context |
 | 05-02 | Additive migration (005) not modifying 004 | Preserves migration history |
 | 05-02 | SQL-only reset script, no in-app reset | Overkill for exec demo audience |
+| 05-03 | Existing animate-in sufficient for role switch transitions | No explicit transition state needed — key remount triggers fadeIn |
+| 05-03 | Skipped AgreementPage existing-agreement notice | Would require additional API call, per plan guidance |
 
 ### Deferred Issues
 
@@ -93,5 +95,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-02-06
-Stopped at: Completed 05-02-PLAN.md — 13 agreements across all workflow states, reset script ready. Next: 05-03 (Demo Polish).
+Stopped at: Completed 05-03-PLAN.md — Phase 5 complete. Demo polish with contextual hints, status badges, and smooth transitions. Next: Phase 6 (Admin Dashboard).
 Resume file: None

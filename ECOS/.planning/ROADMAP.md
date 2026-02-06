@@ -14,7 +14,7 @@ None
 - [x] **Phase 2: Database & API** *(Complete)* - Supabase schema, PostgREST endpoints, RLS policies
 - [x] **Phase 3: Form UI** *(Complete)* - Agreement form with both tracks, security content, access groups
 - [x] **Phase 4: Signature Workflow** *(Complete)* - Three-party signing flow, audit metadata, typed-name signatures
-- [ ] **Phase 5: Role Switcher & Demo** *(In progress)* - Perspective switching UI, fictional data seeding, demo experience
+- [x] **Phase 5: Role Switcher & Demo** *(Complete)* - Perspective switching UI, fictional data seeding, demo experience
 - [ ] **Phase 6: Admin Dashboard** - Compliance status, pending approvals, audit trail viewer
 - [ ] **Phase 7: Deployment & Polish** - Docker deploy, nginx-proxy routing, responsive QA, final polish
 
@@ -74,7 +74,7 @@ Plans:
 Plans:
 - [x] 05-01: Role switcher UI — persistent role selector, context-aware view switching
 - [x] 05-02: Demo data seeding — fictional employees/departments, pre-populated agreements in various workflow states
-- [ ] 05-03: Demo polish — guided flow hints, smooth transitions between perspectives
+- [x] 05-03: Demo polish — guided flow hints, smooth transitions between perspectives
 
 ### Phase 6: Admin Dashboard
 **Goal**: Admin view showing compliance status across departments, pending approval queue, and full audit trail viewer with search/filter
@@ -110,6 +110,6 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 | 2. Database & API | 3/3 | Complete | 2026-02-06 |
 | 3. Form UI | 3/3 | Complete | 2026-02-06 |
 | 4. Signature Workflow | 3/3 | Complete | 2026-02-06 |
-| 5. Role Switcher & Demo | 2/3 | In progress | - |
+| 5. Role Switcher & Demo | 3/3 | Complete | 2026-02-06 |
 | 6. Admin Dashboard | 0/3 | Not started | - |
 | 7. Deployment & Polish | 0/3 | Not started | - |

@@ -96,7 +96,7 @@ Plans:
 
 Plans:
 - [x] 07-01: Docker production build — Dockerfile, multi-stage build, VIRTUAL_PATH=/ecosform label
-- [ ] 07-02: VPS deployment — push to VPS, nginx-proxy integration, SSL verification
+- [x] 07-02: VPS deployment — push to VPS, nginx-proxy integration, SSL verification
 - [ ] 07-03: Responsive polish and QA — mobile/desktop testing, animation polish, final demo walkthrough
 
 ## Progress
@@ -112,4 +112,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 | 4. Signature Workflow | 3/3 | Complete | 2026-02-06 |
 | 5. Role Switcher & Demo | 3/3 | Complete | 2026-02-06 |
 | 6. Admin Dashboard | 3/3 | Complete | 2026-02-06 |
-| 7. Deployment & Polish | 1/3 | In progress | - |
+| 7. Deployment & Polish | 2/3 | In progress | - |

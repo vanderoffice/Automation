@@ -16,7 +16,7 @@ None
 - [x] **Phase 4: Signature Workflow** *(Complete)* - Three-party signing flow, audit metadata, typed-name signatures
 - [x] **Phase 5: Role Switcher & Demo** *(Complete)* - Perspective switching UI, fictional data seeding, demo experience
 - [x] **Phase 6: Admin Dashboard** *(Complete)* - Compliance status, pending approvals, audit trail viewer
-- [ ] **Phase 7: Deployment & Polish** - Docker deploy, nginx-proxy routing, responsive QA, final polish
+- [ ] **Phase 7: Deployment & Polish** *(In progress)* - Docker deploy, nginx-proxy routing, responsive QA, final polish
 
 ## Phase Details
 
@@ -95,7 +95,7 @@ Plans:
 **Plans**: TBD
 
 Plans:
-- [ ] 07-01: Docker production build — Dockerfile, multi-stage build, VIRTUAL_PATH=/ecosform label
+- [x] 07-01: Docker production build — Dockerfile, multi-stage build, VIRTUAL_PATH=/ecosform label
 - [ ] 07-02: VPS deployment — push to VPS, nginx-proxy integration, SSL verification
 - [ ] 07-03: Responsive polish and QA — mobile/desktop testing, animation polish, final demo walkthrough
 
@@ -112,4 +112,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 | 4. Signature Workflow | 3/3 | Complete | 2026-02-06 |
 | 5. Role Switcher & Demo | 3/3 | Complete | 2026-02-06 |
 | 6. Admin Dashboard | 3/3 | Complete | 2026-02-06 |
-| 7. Deployment & Polish | 0/3 | Not started | - |
+| 7. Deployment & Polish | 1/3 | In progress | - |

@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-05)
 
 **Core value:** A visually compelling, fully functional demo that makes the current PDF process look obsolete -- polished enough to pitch to executives and backed by real data persistence.
-**Current focus:** Phase 6 complete — Admin dashboard fully functional. Next: Phase 7 (Deployment & Polish).
+**Current focus:** Phase 7 in progress — Docker production build complete. Next: VPS deployment (07-02).
 
 ## Current Position
 
-Phase: 6 of 7 (Admin Dashboard)
-Plan: 3 of 3 in current phase
-Status: Phase complete
-Last activity: 2026-02-06 — Completed 06-03-PLAN.md
+Phase: 7 of 7 (Deployment & Polish)
+Plan: 1 of 3 in current phase
+Status: In progress
+Last activity: 2026-02-06 — Completed 07-01-PLAN.md
 
-Progress: ██████████████████████████ 86%
+Progress: ███████████████████████████░░░ 90%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 18
+- Total plans completed: 19
 - Average duration: 7 min
-- Total execution time: 2h 8min
+- Total execution time: 2h 12min
 
 **By Phase:**
 
@@ -33,9 +33,10 @@ Progress: ███████████████████████�
 | 4. Signature Workflow | 3/3 | 45 min | 15 min |
 | 5. Role Switcher & Demo | 3/3 | 39 min | 13 min |
 | 6. Admin Dashboard | 3/3 | 8 min | 3 min |
+| 7. Deployment & Polish | 1/3 | 4 min | 4 min |
 
 **Recent Trend:**
-- Last 5 plans: 7 min, 30 min, 3 min, 2 min, 3 min
+- Last 5 plans: 30 min, 3 min, 2 min, 3 min, 4 min
 - Trend: —
 
 ## Accumulated Context
@@ -92,6 +93,10 @@ Recent decisions affecting current work:
 | 06-03 | Client-side filtering on 100 audit entries | No server round-trips per filter change |
 | 06-03 | Set-based expandedAudit state | O(1) per-row expand toggle |
 | 06-03 | Fiscal year from current month | July = FY start |
+| 07-01 | Build args for VITE_ env vars | Vite injects at build time, not runtime |
+| 07-01 | VIRTUAL_DEST=/ in nginx-proxy labels | Strips /ecosform prefix before forwarding to container |
+| 07-01 | Dual-path nginx config | location / for behind proxy, /ecosform/ for direct access |
+| 07-01 | wget for HEALTHCHECK | nginx:alpine has wget, not curl |
 
 ### Deferred Issues
 
@@ -104,5 +109,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-02-06
-Stopped at: Completed 06-03-PLAN.md — Audit trail viewer with search/filter/expand. Phase 6 complete. Next: Phase 7 (Deployment & Polish).
+Stopped at: Completed 07-01-PLAN.md — Production Docker build with Vite build-arg injection, nginx-proxy labels, dual-path nginx. Next: 07-02 VPS deployment.
 Resume file: None

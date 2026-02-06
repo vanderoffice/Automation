@@ -5,7 +5,6 @@ import { EmployeeInfoSection } from './EmployeeInfoSection'
 import { DepartmentInfoSection } from './DepartmentInfoSection'
 import { SecurityContentSection } from './SecurityContentSection'
 import { AcknowledgmentSection } from './AcknowledgmentSection'
-import { AccessGroupSection } from './AccessGroupSection'
 import { FormActions } from './FormActions'
 import { Card } from '../ui/Card'
 import { Button } from '../ui/Button'
@@ -13,7 +12,6 @@ import { Alert } from '../ui/Alert'
 import { securityRequirements, adminResponsibilities } from '../../data/securityRequirements'
 import { SignatureBlock } from './SignatureBlock'
 import { createAgreement } from '../../lib/api/agreements'
-import { saveAccessGroups } from '../../lib/api/accessGroups'
 import { submitForSignature, advanceWorkflow } from '../../lib/api/workflow'
 import { createSignature } from '../../lib/api/signatures'
 import { logAction } from '../../lib/api/audit'
@@ -37,7 +35,6 @@ function getInitialState() {
     workLocation: '',
     fiscalYear: getFiscalYear(),
     acknowledged: false,
-    selectedGroups: [],
   }
 }
 
@@ -71,10 +68,7 @@ function AgreementForm({ currentEmployee }) {
   }
 
   const setTrack = (track) => {
-    const selectedGroups = track === 'annual_renewal'
-      ? ['ecos_user', 'personnel_transactions']
-      : []
-    setFormState((prev) => ({ ...prev, track, selectedGroups }))
+    setFormState((prev) => ({ ...prev, track }))
   }
 
   const clearTrack = () => {
@@ -85,21 +79,9 @@ function AgreementForm({ currentEmployee }) {
     setFormState((prev) => ({ ...prev, acknowledged: !prev.acknowledged }))
   }
 
-  const handleGroupToggle = (groupId) => {
-    setFormState((prev) => {
-      const groups = prev.selectedGroups.includes(groupId)
-        ? prev.selectedGroups.filter((id) => id !== groupId)
-        : [...prev.selectedGroups, groupId]
-      return { ...prev, selectedGroups: groups }
-    })
-  }
-
-  // Show admin responsibilities when System Administration access is selected
-  const showAdminSection = formState.selectedGroups.includes('system_admin')
-
-  const allSections = showAdminSection
-    ? [...securityRequirements, adminResponsibilities]
-    : securityRequirements
+  // Show all security content including admin responsibilities —
+  // access groups are assigned by the manager during approval, not by the employee
+  const allSections = [...securityRequirements, adminResponsibilities]
 
   function validateForm() {
     const validationErrors = {}
@@ -112,9 +94,6 @@ function AgreementForm({ currentEmployee }) {
     }
     if (!formState.workLocation.trim()) {
       validationErrors.workLocation = 'Work location is required'
-    }
-    if (formState.track === 'new_updated' && formState.selectedGroups.length === 0) {
-      validationErrors.selectedGroups = 'At least one access group must be selected'
     }
 
     if (!formState.acknowledged) {
@@ -155,17 +134,6 @@ function AgreementForm({ currentEmployee }) {
       return
     }
 
-    const { error: groupsError } = await saveAccessGroups(
-      agreement.id,
-      formState.selectedGroups
-    )
-
-    if (groupsError) {
-      setSubmitError('Agreement created but failed to save access groups: ' + groupsError.message)
-      setIsSubmitting(false)
-      return
-    }
-
     const { error: workflowError } = await submitForSignature(agreement.id)
 
     if (workflowError) {
@@ -197,19 +165,6 @@ function AgreementForm({ currentEmployee }) {
       setSubmitError('Failed to save draft: ' + agreementError.message)
       setIsSubmitting(false)
       return
-    }
-
-    if (formState.selectedGroups.length > 0) {
-      const { error: groupsError } = await saveAccessGroups(
-        agreement.id,
-        formState.selectedGroups
-      )
-
-      if (groupsError) {
-        setSubmitError('Draft saved but failed to save access groups: ' + groupsError.message)
-        setIsSubmitting(false)
-        return
-      }
     }
 
     setIsSubmitting(false)
@@ -306,7 +261,7 @@ function AgreementForm({ currentEmployee }) {
               <p>Track: {trackLabel}</p>
               <p>Employee: {employeeName}</p>
               <p>Fiscal Year: {submitSuccess.fiscal_year}</p>
-              <p>Access Groups: {formState.selectedGroups.length}</p>
+              <p>Access groups will be assigned by your manager.</p>
             </div>
             {signatureComplete ? (
               <p className="text-sm text-green-400 font-medium">
@@ -390,21 +345,12 @@ function AgreementForm({ currentEmployee }) {
         errors={errors}
       />
       <SecurityContentSection
-        sections={securityRequirements}
-        adminSection={adminResponsibilities}
-        showAdminSection={showAdminSection}
+        sections={allSections}
       />
       <AcknowledgmentSection
-        sections={securityRequirements}
-        adminSection={adminResponsibilities}
-        showAdminSection={showAdminSection}
+        sections={allSections}
         acknowledged={formState.acknowledged}
         onToggle={handleAcknowledgmentToggle}
-      />
-      <AccessGroupSection
-        selectedGroups={formState.selectedGroups}
-        onChange={handleGroupToggle}
-        track={formState.track}
       />
       <FormActions
         onSubmit={handleSubmit}

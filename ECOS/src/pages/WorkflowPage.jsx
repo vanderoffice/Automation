@@ -3,7 +3,10 @@ import { Link } from 'react-router-dom'
 import { useRole } from '../context/RoleContext'
 import { Card } from '../components/ui/Card'
 import { Badge } from '../components/ui/Badge'
+import { Checkbox } from '../components/ui/Checkbox'
 import { SignatureBlock } from '../components/form/SignatureBlock'
+import { accessGroups } from '../data/accessGroups'
+import { saveAccessGroups } from '../lib/api/accessGroups'
 import {
   getAgreements,
   getPendingForRole,
@@ -135,7 +138,30 @@ function AgreementCard({ agreement, signatures, role, currentEmployee, onSignCom
   const pendingRole = SIGNING_ROLES_BY_STATUS[agreement.status]
   const canSign = pendingRole === role
 
+  // Manager assigns access groups during approval
+  const [selectedGroups, setSelectedGroups] = useState([])
+
+  const handleGroupToggle = (groupId) => {
+    setSelectedGroups((prev) =>
+      prev.includes(groupId)
+        ? prev.filter((id) => id !== groupId)
+        : [...prev, groupId]
+    )
+  }
+
   async function handleSign(signatureData) {
+    // Manager saves access groups before signing
+    if (role === 'manager') {
+      const { error: groupsError } = await saveAccessGroups(agreement.id, selectedGroups)
+      if (groupsError) {
+        console.error('Failed to save access groups:', groupsError)
+        return
+      }
+      await logAction(agreement.id, currentEmployee.id, 'access_groups_assigned', {
+        groups: selectedGroups,
+      })
+    }
+
     const { error: sigError } = await createSignature({
       agreement_id: agreement.id,
       signer_id: currentEmployee.id,
@@ -188,6 +214,30 @@ function AgreementCard({ agreement, signatures, role, currentEmployee, onSignCom
         <div className="border-t border-neutral-800 pt-4">
           <SignatureTimeline signatures={signatures} status={agreement.status} />
         </div>
+
+        {/* Manager: assign access groups before signing */}
+        {canSign && role === 'manager' && (
+          <div className="border-t border-neutral-800 pt-4 space-y-3">
+            <div>
+              <h4 className="text-sm font-medium text-white mb-1">Assign ECOS Access Groups</h4>
+              <p className="text-xs text-neutral-500">
+                Select the access levels for this employee. These determine their ECOS system permissions.
+              </p>
+            </div>
+            <div className="space-y-3">
+              {accessGroups.map((group) => (
+                <Checkbox
+                  key={group.id}
+                  name={'mgr-group-' + group.id}
+                  label={group.name}
+                  description={group.description}
+                  checked={selectedGroups.includes(group.id)}
+                  onChange={() => handleGroupToggle(group.id)}
+                />
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Action area */}
         {canSign && (

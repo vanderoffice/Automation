@@ -1,12 +1,8 @@
 import { SectionHeader } from '../ui/SectionHeader'
 import { Card } from '../ui/Card'
 
-function AcknowledgmentSection({ sections, acknowledged, onToggle, showAdminSection = false, adminSection }) {
-  const allSections = showAdminSection && adminSection
-    ? [...sections, adminSection]
-    : sections
-
-  const sectionTitles = allSections.map((s) => s.title)
+function AcknowledgmentSection({ sections, acknowledged, onToggle }) {
+  const sectionTitles = sections.map((s) => s.title)
 
   return (
     <div>

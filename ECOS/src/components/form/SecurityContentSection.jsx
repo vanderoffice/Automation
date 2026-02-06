@@ -15,18 +15,14 @@ function BulletList({ items }) {
   )
 }
 
-function SecurityContentSection({ sections, showAdminSection = false, adminSection }) {
+function SecurityContentSection({ sections }) {
   const [openedSections, setOpenedSections] = useState(
     // First section defaults open — counts as reviewed
     new Set(sections.length > 0 ? [sections[0].id] : [])
   )
 
-  const allSections = showAdminSection && adminSection
-    ? [...sections, adminSection]
-    : sections
-
-  const totalCount = allSections.length
-  const openedCount = allSections.filter((s) => openedSections.has(s.id)).length
+  const totalCount = sections.length
+  const openedCount = sections.filter((s) => openedSections.has(s.id)).length
 
   const handleOpen = useCallback((sectionId) => {
     setOpenedSections((prev) => {
@@ -55,19 +51,6 @@ function SecurityContentSection({ sections, showAdminSection = false, adminSecti
             <BulletList items={section.content} />
           </CollapsibleSection>
         ))}
-
-        {showAdminSection && adminSection && (
-          <div className="border-l-2 border-orange-500/60 pl-2">
-            <CollapsibleSection
-              id={adminSection.id}
-              title={adminSection.title}
-              defaultOpen={false}
-              onOpen={handleOpen}
-            >
-              <BulletList items={adminSection.content} />
-            </CollapsibleSection>
-          </div>
-        )}
       </div>
 
       <p className="text-xs text-neutral-500 mt-3">

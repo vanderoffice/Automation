@@ -1,7 +1,16 @@
 import { useState, useEffect, useCallback } from 'react'
+import { useRole } from '../context/RoleContext'
 import { Card } from '../components/ui/Card'
 import { Badge } from '../components/ui/Badge'
-import { getAgreements, getExpiringAgreements } from '../lib/api/index.js'
+import { SignatureBlock } from '../components/form/SignatureBlock'
+import {
+  getAgreements,
+  getExpiringAgreements,
+  getPendingForRole,
+  createSignature,
+  advanceWorkflow,
+  logAction,
+} from '../lib/api/index.js'
 
 function computeStats(agreements) {
   const nonDraft = agreements.filter((a) => a.status !== 'draft')
@@ -85,9 +94,36 @@ function expiryVariant(expiresAt) {
   return 'neutral'
 }
 
+const TRACK_LABELS = {
+  new_updated: 'New / Updated',
+  annual_renewal: 'Annual Renewal',
+}
+
+function formatWaitDays(updatedAt) {
+  const now = new Date()
+  const updated = new Date(updatedAt)
+  const diffMs = now.getTime() - updated.getTime()
+  const days = Math.floor(diffMs / (1000 * 60 * 60 * 24))
+  if (days === 0) return 'Today'
+  if (days === 1) return '1 day'
+  return days + ' days'
+}
+
+function urgencyBorder(updatedAt) {
+  const now = new Date()
+  const updated = new Date(updatedAt)
+  const diffMs = now.getTime() - updated.getTime()
+  const days = Math.floor(diffMs / (1000 * 60 * 60 * 24))
+  if (days > 7) return 'border-l-4 border-l-red-500'
+  if (days >= 3) return 'border-l-4 border-l-orange-500'
+  return 'border-l-4 border-l-neutral-700'
+}
+
 export default function DashboardPage() {
+  const { currentEmployee } = useRole()
   const [agreements, setAgreements] = useState([])
   const [expiring, setExpiring] = useState([])
+  const [pendingAdmin, setPendingAdmin] = useState([])
   const [lastUpdated, setLastUpdated] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -96,14 +132,21 @@ export default function DashboardPage() {
     setLoading(true)
     setError(null)
     try {
-      const [allResult, expiringResult] = await Promise.all([
+      const [allResult, expiringResult, pendingResult] = await Promise.all([
         getAgreements(),
         getExpiringAgreements(90),
+        getPendingForRole('admin'),
       ])
       if (allResult.error) throw allResult.error
       if (expiringResult.error) throw expiringResult.error
+      if (pendingResult.error) throw pendingResult.error
       setAgreements(allResult.data || [])
       setExpiring(expiringResult.data || [])
+      // Sort by wait time (longest waiting first)
+      const pending = (pendingResult.data || []).sort(
+        (a, b) => new Date(a.updated_at) - new Date(b.updated_at)
+      )
+      setPendingAdmin(pending)
       setLastUpdated(new Date())
     } catch (err) {
       console.error('DashboardPage: load error', err)
@@ -144,6 +187,32 @@ export default function DashboardPage() {
   const stats = computeStats(agreements)
   const departments = computeDepartments(agreements)
 
+  const signerName = currentEmployee
+    ? currentEmployee.first_name + ' ' + currentEmployee.last_name
+    : 'Admin'
+
+  async function handleAdminSign(agreement, signatureData) {
+    const { error: sigError } = await createSignature({
+      agreement_id: agreement.id,
+      signer_id: currentEmployee.id,
+      signer_role: 'admin',
+      typed_name: signatureData.typed_name,
+      certified: signatureData.certified,
+      ip_address: signatureData.ip_address,
+      user_agent: signatureData.user_agent,
+      session_hash: signatureData.session_hash,
+      form_version_hash: signatureData.form_version_hash,
+    })
+    if (sigError) return
+
+    await advanceWorkflow(agreement.id, { signer_role: 'admin' })
+    await logAction(agreement.id, currentEmployee.id, 'signed', {
+      role: 'admin',
+      typed_name: signatureData.typed_name,
+    })
+    loadData()
+  }
+
   return (
     <div className="animate-in">
       <h1 className="text-2xl font-bold text-white mb-2">Admin Dashboard</h1>
@@ -179,6 +248,58 @@ export default function DashboardPage() {
             </p>
             <p className="text-sm text-neutral-400 mt-1">Compliance Rate</p>
           </div>
+        </Card>
+      </div>
+
+      {/* Pending Approvals queue */}
+      <div className="mb-8">
+        <Card title={'Pending Approvals (' + pendingAdmin.length + ')'}>
+          {pendingAdmin.length === 0 ? (
+            <div className="flex items-center gap-2">
+              <svg className="w-5 h-5 text-green-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                <polyline points="22 4 12 14.01 9 11.01" />
+              </svg>
+              <p className="text-green-400 text-sm">All approvals current — no pending items</p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {pendingAdmin.map((a) => {
+                const emp = a.employees
+                const dept = emp?.departments
+                const waitLabel = formatWaitDays(a.updated_at)
+                return (
+                  <div key={a.id} className={'rounded-lg bg-neutral-900/50 p-4 ' + urgencyBorder(a.updated_at)}>
+                    <div className="flex items-start justify-between gap-4 mb-3">
+                      <div className="min-w-0">
+                        <p className="text-sm text-white font-medium truncate">
+                          {emp ? emp.first_name + ' ' + emp.last_name : 'Unknown'}
+                        </p>
+                        <p className="text-xs text-neutral-500">
+                          {dept?.name || 'No department'}
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-2 flex-shrink-0">
+                        <Badge variant="accent">
+                          {TRACK_LABELS[a.track] || a.track}
+                        </Badge>
+                        <span className="text-xs text-neutral-500">
+                          Waiting {waitLabel}
+                        </span>
+                      </div>
+                    </div>
+                    <SignatureBlock
+                      signerRole="admin"
+                      signerName={signerName}
+                      onSign={(sigData) => handleAdminSign(a, sigData)}
+                      disabled={false}
+                      existingSignature={null}
+                    />
+                  </div>
+                )
+              })}
+            </div>
+          )}
         </Card>
       </div>
 

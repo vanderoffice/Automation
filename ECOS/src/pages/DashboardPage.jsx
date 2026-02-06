@@ -3,10 +3,13 @@ import { useRole } from '../context/RoleContext'
 import { Card } from '../components/ui/Card'
 import { Badge } from '../components/ui/Badge'
 import { SignatureBlock } from '../components/form/SignatureBlock'
+import { TextInput } from '../components/ui/TextInput'
+import { Select } from '../components/ui/Select'
 import {
   getAgreements,
   getExpiringAgreements,
   getPendingForRole,
+  getRecentActivity,
   createSignature,
   advanceWorkflow,
   logAction,
@@ -99,6 +102,25 @@ const TRACK_LABELS = {
   annual_renewal: 'Annual Renewal',
 }
 
+const ACTION_LABELS = {
+  agreement_submitted: 'Submitted',
+  signature_recorded: 'Signed',
+  agreement_completed: 'Completed',
+}
+
+const ACTION_VARIANTS = {
+  agreement_submitted: 'accent',
+  signature_recorded: 'success',
+  agreement_completed: 'success',
+}
+
+const ACTION_FILTER_OPTIONS = [
+  { value: '', label: 'All Actions' },
+  { value: 'agreement_submitted', label: 'Submitted' },
+  { value: 'signature_recorded', label: 'Signed' },
+  { value: 'agreement_completed', label: 'Completed' },
+]
+
 function formatWaitDays(updatedAt) {
   const now = new Date()
   const updated = new Date(updatedAt)
@@ -124,6 +146,9 @@ export default function DashboardPage() {
   const [agreements, setAgreements] = useState([])
   const [expiring, setExpiring] = useState([])
   const [pendingAdmin, setPendingAdmin] = useState([])
+  const [auditLog, setAuditLog] = useState([])
+  const [auditSearch, setAuditSearch] = useState('')
+  const [auditFilter, setAuditFilter] = useState('')
   const [lastUpdated, setLastUpdated] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -132,16 +157,19 @@ export default function DashboardPage() {
     setLoading(true)
     setError(null)
     try {
-      const [allResult, expiringResult, pendingResult] = await Promise.all([
+      const [allResult, expiringResult, pendingResult, auditResult] = await Promise.all([
         getAgreements(),
         getExpiringAgreements(90),
         getPendingForRole('admin'),
+        getRecentActivity(100),
       ])
       if (allResult.error) throw allResult.error
       if (expiringResult.error) throw expiringResult.error
       if (pendingResult.error) throw pendingResult.error
+      if (auditResult.error) throw auditResult.error
       setAgreements(allResult.data || [])
       setExpiring(expiringResult.data || [])
+      setAuditLog(auditResult.data || [])
       // Sort by wait time (longest waiting first)
       const pending = (pendingResult.data || []).sort(
         (a, b) => new Date(a.updated_at) - new Date(b.updated_at)
@@ -369,6 +397,76 @@ export default function DashboardPage() {
               })}
             </div>
           )}
+        </Card>
+      </div>
+
+      {/* Audit Trail */}
+      <div className="mt-8">
+        <Card title="Audit Trail">
+          <div className="flex flex-col sm:flex-row gap-3 mb-4">
+            <TextInput
+              name="audit-search"
+              placeholder="Search by name or action..."
+              value={auditSearch}
+              onChange={(e) => setAuditSearch(e.target.value)}
+              className="flex-1"
+            />
+            <Select
+              name="audit-filter"
+              value={auditFilter}
+              onChange={(e) => setAuditFilter(e.target.value)}
+              options={ACTION_FILTER_OPTIONS}
+              className="sm:w-48"
+            />
+          </div>
+          {(() => {
+            const term = auditSearch.toLowerCase()
+            const filtered = auditLog.filter((entry) => {
+              if (auditFilter && entry.action !== auditFilter) return false
+              if (term) {
+                const actorName = entry.employees
+                  ? (entry.employees.first_name + ' ' + entry.employees.last_name).toLowerCase()
+                  : ''
+                const actionLabel = (ACTION_LABELS[entry.action] || entry.action).toLowerCase()
+                if (!actorName.includes(term) && !actionLabel.includes(term)) return false
+              }
+              return true
+            })
+            if (filtered.length === 0) {
+              return <p className="text-neutral-500 text-sm">No audit entries match your filters.</p>
+            }
+            return (
+              <div className="divide-y divide-neutral-800">
+                {filtered.map((entry) => {
+                  const actor = entry.employees
+                    ? entry.employees.first_name + ' ' + entry.employees.last_name
+                    : 'System'
+                  const label = ACTION_LABELS[entry.action] || entry.action.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())
+                  const variant = ACTION_VARIANTS[entry.action] || 'neutral'
+                  const ts = new Date(entry.created_at).toLocaleString('en-US', {
+                    month: 'short', day: 'numeric', year: 'numeric',
+                    hour: 'numeric', minute: '2-digit', hour12: true,
+                  })
+                  const details = entry.details || {}
+                  const detailSnippet = details.signer_role
+                    ? 'Role: ' + details.signer_role
+                    : details.from_status && details.to_status
+                      ? details.from_status + ' → ' + details.to_status
+                      : null
+                  return (
+                    <div key={entry.id} className="py-2.5 flex items-center gap-3 text-sm">
+                      <span className="text-xs text-neutral-500 w-36 flex-shrink-0">{ts}</span>
+                      <Badge variant={variant}>{label}</Badge>
+                      <span className="text-neutral-300 truncate flex-1">{actor}</span>
+                      {detailSnippet && (
+                        <span className="text-xs text-neutral-500 flex-shrink-0">{detailSnippet}</span>
+                      )}
+                    </div>
+                  )
+                })}
+              </div>
+            )
+          })()}
         </Card>
       </div>
 

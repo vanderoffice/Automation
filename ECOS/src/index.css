@@ -87,9 +87,14 @@ body {
   animation: pulse-orange 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
-/* Simple fade-in animation for page transitions */
+/* Simple fade-in animation for page transitions and role switches */
 .animate-in {
   animation: fadeIn 0.3s ease-out;
+}
+
+/* Smooth content transitions during role switches */
+main {
+  transition: opacity 0.15s ease;
 }
 
 @keyframes fadeIn {

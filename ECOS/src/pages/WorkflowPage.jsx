@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
+import { Link } from 'react-router-dom'
 import { useRole } from '../context/RoleContext'
 import { Card } from '../components/ui/Card'
 import { Badge } from '../components/ui/Badge'
@@ -293,9 +294,29 @@ export default function WorkflowPage() {
 
   const roleLabel = role ? role.charAt(0).toUpperCase() + role.slice(1) : 'Unknown'
 
+  // Count statuses for header badges
+  const pendingCount = agreements.filter((a) => a.status !== 'completed').length
+  const completedCount = agreements.filter((a) => a.status === 'completed').length
+
   return (
     <div className="animate-in">
-      <h1 className="text-2xl font-bold text-white mb-2">Workflow Status</h1>
+      <div className="flex items-baseline gap-3 mb-2 flex-wrap">
+        <h1 className="text-2xl font-bold text-white">Workflow Status</h1>
+        {!loading && agreements.length > 0 && (
+          <div className="flex gap-2">
+            {pendingCount > 0 && (
+              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-orange-500/15 text-orange-400">
+                {pendingCount} pending
+              </span>
+            )}
+            {completedCount > 0 && (
+              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-500/15 text-green-400">
+                {completedCount} completed
+              </span>
+            )}
+          </div>
+        )}
+      </div>
       <p className="text-neutral-400 mb-8">
         Viewing as <span className="text-white font-medium">{roleLabel}</span>
         {currentEmployee && (
@@ -313,13 +334,24 @@ export default function WorkflowPage() {
         </Card>
       ) : agreements.length === 0 ? (
         <Card>
-          <div className="text-center py-4">
-            <p className="text-neutral-400 text-lg mb-1">No agreements in workflow</p>
-            <p className="text-neutral-500 text-sm">
-              {role === 'employee'
-                ? 'Submit an agreement from the Agreement page to get started.'
-                : 'No agreements are pending your signature.'}
-            </p>
+          <div className="text-center py-6">
+            <p className="text-neutral-400 text-lg mb-2">No agreements in workflow</p>
+            {role === 'employee' ? (
+              <p className="text-neutral-500 text-sm">
+                Submit a new agreement to see it appear here.{' '}
+                <Link to="/agreement" className="text-orange-400 hover:text-orange-300 underline underline-offset-2">
+                  Start a new agreement
+                </Link>
+              </p>
+            ) : role === 'manager' ? (
+              <p className="text-neutral-500 text-sm">
+                No agreements are pending your review. When employees submit agreements, they&rsquo;ll appear here for your signature.
+              </p>
+            ) : (
+              <p className="text-neutral-500 text-sm">
+                No agreements are pending your review. After manager approval, agreements come here for final admin sign-off.
+              </p>
+            )}
           </div>
         </Card>
       ) : (

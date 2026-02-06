@@ -84,7 +84,7 @@ Plans:
 
 Plans:
 - [x] 06-01: Compliance overview — department compliance rates, expiring agreements, status summary cards
-- [ ] 06-02: Approval queue — pending signatures list, one-click approve workflow
+- [x] 06-02: Approval queue — pending signatures list, one-click approve workflow
 - [ ] 06-03: Audit trail viewer — searchable/filterable log of all signature events and form changes
 
 ### Phase 7: Deployment & Polish
@@ -111,5 +111,5 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 | 3. Form UI | 3/3 | Complete | 2026-02-06 |
 | 4. Signature Workflow | 3/3 | Complete | 2026-02-06 |
 | 5. Role Switcher & Demo | 3/3 | Complete | 2026-02-06 |
-| 6. Admin Dashboard | 1/3 | In progress | - |
+| 6. Admin Dashboard | 2/3 | In progress | - |
 | 7. Deployment & Polish | 0/3 | Not started | - |

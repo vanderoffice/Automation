@@ -304,7 +304,7 @@ export default function DashboardPage() {
                 const waitLabel = formatWaitDays(a.updated_at)
                 return (
                   <div key={a.id} className={'rounded-lg bg-neutral-900/50 p-4 ' + urgencyBorder(a.updated_at)}>
-                    <div className="flex items-start justify-between gap-4 mb-3">
+                    <div className="flex flex-wrap items-start justify-between gap-x-4 gap-y-2 mb-3">
                       <div className="min-w-0">
                         <p className="text-sm text-white font-medium truncate">
                           {emp ? emp.first_name + ' ' + emp.last_name : 'Unknown'}
@@ -344,25 +344,23 @@ export default function DashboardPage() {
         ) : (
           <div className="space-y-4">
             {departments.map((dept) => (
-              <div key={dept.name} className="flex items-center gap-4">
-                <div className="w-40 flex-shrink-0">
-                  <p className="text-sm text-white font-medium truncate">{dept.name}</p>
-                  <p className="text-xs text-neutral-500">
-                    {dept.completed}/{dept.total} completed
-                  </p>
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="h-2 bg-neutral-800 rounded-full overflow-hidden">
-                    <div
-                      className={'h-full rounded-full transition-all ' + barColor(dept.rate)}
-                      style={{ width: dept.rate + '%' }}
-                    />
+              <div key={dept.name} className="space-y-1.5">
+                <div className="flex items-baseline justify-between gap-2">
+                  <p className="text-sm text-white font-medium truncate min-w-0">{dept.name}</p>
+                  <div className="flex items-baseline gap-2 flex-shrink-0">
+                    <span className="text-xs text-neutral-500">
+                      {dept.completed}/{dept.total}
+                    </span>
+                    <span className={'text-sm font-semibold ' + rateColor(dept.rate)}>
+                      {dept.rate}%
+                    </span>
                   </div>
                 </div>
-                <div className="w-14 text-right flex-shrink-0">
-                  <span className={'text-sm font-semibold ' + rateColor(dept.rate)}>
-                    {dept.rate}%
-                  </span>
+                <div className="h-2 bg-neutral-800 rounded-full overflow-hidden">
+                  <div
+                    className={'h-full rounded-full transition-all ' + barColor(dept.rate)}
+                    style={{ width: dept.rate + '%' }}
+                  />
                 </div>
               </div>
             ))}
@@ -464,7 +462,7 @@ export default function DashboardPage() {
                   return (
                     <div key={entry.id}>
                       <div
-                        className="py-2.5 flex items-center gap-3 text-sm cursor-pointer hover:bg-neutral-900/30 -mx-1 px-1 rounded transition-colors"
+                        className="py-2.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm cursor-pointer hover:bg-neutral-900/30 -mx-1 px-1 rounded transition-colors"
                         onClick={() => {
                           setExpandedAudit((prev) => {
                             const next = new Set(prev)
@@ -475,15 +473,16 @@ export default function DashboardPage() {
                         }}
                       >
                         <span className={'text-neutral-600 text-xs flex-shrink-0 transition-transform ' + (isExpanded ? 'rotate-90' : '')}>&#9654;</span>
-                        <span className="text-xs text-neutral-500 w-36 flex-shrink-0">{ts}</span>
+                        <span className="text-xs text-neutral-500 w-36 flex-shrink-0 hidden sm:inline">{ts}</span>
+                        <span className="text-xs text-neutral-500 sm:hidden flex-shrink-0">{new Date(entry.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
                         <Badge variant={variant}>{label}</Badge>
-                        <span className="text-neutral-300 truncate flex-1">{actor}</span>
+                        <span className="text-neutral-300 truncate flex-1 min-w-0">{actor}</span>
                         {detailSnippet && (
-                          <span className="text-xs text-neutral-500 flex-shrink-0">{detailSnippet}</span>
+                          <span className="text-xs text-neutral-500 flex-shrink-0 hidden md:inline">{detailSnippet}</span>
                         )}
                       </div>
                       {isExpanded && detailEntries.length > 0 && (
-                        <div className="ml-6 mb-2 rounded bg-neutral-900/50 px-4 py-3 font-mono text-xs text-neutral-400 space-y-1">
+                        <div className="ml-2 sm:ml-6 mb-2 rounded bg-neutral-900/50 px-3 sm:px-4 py-3 font-mono text-xs text-neutral-400 space-y-1 overflow-x-auto">
                           {detailEntries.map(([k, v]) => (
                             <div key={k}>
                               <span className="text-neutral-500">{k}:</span>{' '}

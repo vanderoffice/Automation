@@ -165,7 +165,7 @@ function AgreementCard({ agreement, signatures, role, currentEmployee, onSignCom
     <Card>
       <div className="space-y-4">
         {/* Header */}
-        <div className="flex items-start justify-between gap-4">
+        <div className="flex flex-wrap items-start justify-between gap-x-4 gap-y-2">
           <div className="min-w-0">
             <h3 className="text-white font-semibold truncate">
               {emp ? emp.first_name + ' ' + emp.last_name : 'Unknown'}

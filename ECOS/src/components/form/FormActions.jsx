@@ -17,7 +17,7 @@ function FormActions({ onSubmit, onSaveDraft, isSubmitting, isValid, errors }) {
         </Alert>
       )}
 
-      <div className="flex items-center gap-3">
+      <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center gap-3">
         <Button
           variant="secondary"
           onClick={onSaveDraft}

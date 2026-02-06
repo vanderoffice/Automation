@@ -1,6 +1,6 @@
 import { Card, SectionHeader, Badge, TextInput } from '../ui'
 
-function DepartmentInfoSection({ formState, onChange, fiscalYear }) {
+function DepartmentInfoSection({ formState, onChange, fiscalYear, errors = {} }) {
   return (
     <div>
       <SectionHeader
@@ -17,6 +17,7 @@ function DepartmentInfoSection({ formState, onChange, fiscalYear }) {
             placeholder="Enter supervisor's full name"
             value={formState.supervisorName}
             onChange={onChange('supervisorName')}
+            error={errors.supervisorName}
           />
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <TextInput
@@ -26,6 +27,7 @@ function DepartmentInfoSection({ formState, onChange, fiscalYear }) {
               placeholder="(916) 555-0000"
               value={formState.workPhone}
               onChange={onChange('workPhone')}
+              error={errors.workPhone}
             />
             <TextInput
               label="Work Location"
@@ -33,6 +35,7 @@ function DepartmentInfoSection({ formState, onChange, fiscalYear }) {
               placeholder="Sacramento HQ"
               value={formState.workLocation}
               onChange={onChange('workLocation')}
+              error={errors.workLocation}
             />
           </div>
         </div>

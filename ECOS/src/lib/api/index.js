@@ -35,3 +35,8 @@ export {
   getAuditLogByActor,
   getRecentActivity,
 } from './audit.js'
+
+export {
+  saveAccessGroups,
+  getAccessGroups,
+} from './accessGroups.js'

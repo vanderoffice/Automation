@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { Card } from '../components/ui/Card'
 import { Badge } from '../components/ui/Badge'
-import { getAgreements } from '../lib/api/index.js'
+import { getAgreements, getExpiringAgreements } from '../lib/api/index.js'
 
 function computeStats(agreements) {
   const nonDraft = agreements.filter((a) => a.status !== 'draft')
@@ -63,8 +63,32 @@ function barColor(rate) {
   return 'bg-red-500'
 }
 
+function formatExpiryLabel(expiresAt) {
+  const now = new Date()
+  const expires = new Date(expiresAt)
+  const diffMs = expires.getTime() - now.getTime()
+  const diffDays = Math.round(diffMs / (1000 * 60 * 60 * 24))
+
+  if (diffDays < 0) return 'Expired ' + Math.abs(diffDays) + ' days ago'
+  if (diffDays === 0) return 'Expires today'
+  return 'Expires in ' + diffDays + ' days'
+}
+
+function expiryVariant(expiresAt) {
+  const now = new Date()
+  const expires = new Date(expiresAt)
+  const diffMs = expires.getTime() - now.getTime()
+  const diffDays = Math.round(diffMs / (1000 * 60 * 60 * 24))
+
+  if (diffDays <= 30) return 'warning'
+  if (diffDays <= 60) return 'accent'
+  return 'neutral'
+}
+
 export default function DashboardPage() {
   const [agreements, setAgreements] = useState([])
+  const [expiring, setExpiring] = useState([])
+  const [lastUpdated, setLastUpdated] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
@@ -72,9 +96,15 @@ export default function DashboardPage() {
     setLoading(true)
     setError(null)
     try {
-      const { data, error: err } = await getAgreements()
-      if (err) throw err
-      setAgreements(data || [])
+      const [allResult, expiringResult] = await Promise.all([
+        getAgreements(),
+        getExpiringAgreements(90),
+      ])
+      if (allResult.error) throw allResult.error
+      if (expiringResult.error) throw expiringResult.error
+      setAgreements(allResult.data || [])
+      setExpiring(expiringResult.data || [])
+      setLastUpdated(new Date())
     } catch (err) {
       console.error('DashboardPage: load error', err)
       setError(err.message || 'Failed to load dashboard data')
@@ -184,6 +214,49 @@ export default function DashboardPage() {
           </div>
         )}
       </Card>
+
+      {/* Expiring Soon */}
+      <div className="mt-8">
+        <Card title="Expiring Soon">
+          {expiring.length === 0 ? (
+            <div className="flex items-center gap-2">
+              <span className="inline-block w-2 h-2 rounded-full bg-green-500" />
+              <p className="text-green-400 text-sm">All agreements current</p>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {expiring.map((a) => {
+                const emp = a.employees
+                const dept = emp?.departments
+                return (
+                  <div key={a.id} className="flex items-center justify-between gap-4">
+                    <div className="min-w-0">
+                      <p className="text-sm text-white font-medium truncate">
+                        {emp ? emp.first_name + ' ' + emp.last_name : 'Unknown'}
+                      </p>
+                      <p className="text-xs text-neutral-500">
+                        {dept?.name || 'No department'}
+                      </p>
+                    </div>
+                    <div className="flex-shrink-0">
+                      <Badge variant={expiryVariant(a.expires_at)}>
+                        {formatExpiryLabel(a.expires_at)}
+                      </Badge>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          )}
+        </Card>
+      </div>
+
+      {/* Last updated */}
+      {lastUpdated && (
+        <p className="text-xs text-neutral-600 mt-6 text-right">
+          Last updated {lastUpdated.toLocaleTimeString()}
+        </p>
+      )}
     </div>
   )
 }

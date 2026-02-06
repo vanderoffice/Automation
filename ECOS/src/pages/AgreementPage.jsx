@@ -1,326 +1,180 @@
-import { useState } from 'react'
-import {
-  TextInput,
-  TextArea,
-  Checkbox,
-  Select,
-  Button,
-  Card,
-  Badge,
-  SectionHeader,
-  Alert,
-} from '../components/ui'
+import { useState, useEffect } from 'react'
+import { supabase } from '../lib/supabase.js'
+import { useRole } from '../context/RoleContext'
+import { Card, Badge, SectionHeader } from '../components/ui'
 
+/**
+ * Temporary data verification view.
+ * Proves full stack: React -> Supabase -> PostgreSQL (ecos schema + RLS) -> data displayed.
+ * Phase 3 will replace this with the actual security agreement form.
+ */
 export default function AgreementPage() {
-  const [inputValue, setInputValue] = useState('')
-  const [textareaValue, setTextareaValue] = useState('')
-  const [checked1, setChecked1] = useState(true)
-  const [checked2, setChecked2] = useState(false)
-  const [selectValue, setSelectValue] = useState('')
-  const [showAlerts, setShowAlerts] = useState({
-    info: true,
-    success: true,
-    warning: true,
-    error: true,
-  })
+  const { currentEmployee, role, loading: roleLoading } = useRole()
+  const [counts, setCounts] = useState(null)
+  const [connected, setConnected] = useState(null)
+  const [error, setError] = useState(null)
 
-  const selectOptions = [
-    { value: 'residential', label: 'Residential' },
-    { value: 'commercial', label: 'Commercial' },
-    { value: 'industrial', label: 'Industrial' },
-  ]
+  useEffect(() => {
+    async function fetchCounts() {
+      try {
+        const [deptRes, empRes, agrRes] = await Promise.all([
+          supabase.from('departments').select('id', { count: 'exact', head: true }),
+          supabase.from('employees').select('id', { count: 'exact', head: true }),
+          supabase.from('agreements').select('id', { count: 'exact', head: true }),
+        ])
+
+        const hasError = deptRes.error || empRes.error || agrRes.error
+        if (hasError) {
+          console.error('AgreementPage fetch errors:', { deptRes, empRes, agrRes })
+          setError('Failed to fetch data from Supabase')
+          setConnected(false)
+          return
+        }
+
+        setCounts({
+          departments: deptRes.count,
+          employees: empRes.count,
+          agreements: agrRes.count,
+        })
+        setConnected(true)
+      } catch (err) {
+        console.error('AgreementPage error:', err)
+        setError(err.message)
+        setConnected(false)
+      }
+    }
+
+    fetchCounts()
+  }, [])
+
+  if (roleLoading) {
+    return (
+      <div className="animate-in max-w-4xl">
+        <p className="text-neutral-400">Loading role context...</p>
+      </div>
+    )
+  }
 
   return (
-    <div className="animate-in space-y-10 max-w-4xl">
+    <div className="animate-in space-y-8 max-w-4xl">
       <div>
         <h1 className="text-2xl font-bold text-white mb-2">
-          Component Preview
+          Security Agreement
         </h1>
-        <p className="text-neutral-400 mb-8">
-          Design system showcase — all UI components rendered below.
+        <p className="text-neutral-400 mb-2">
+          Data verification view — confirming full stack connectivity.
+        </p>
+        <p className="text-neutral-500 text-sm">
+          This is a temporary view. Phase 3 replaces it with the actual form.
         </p>
       </div>
 
-      {/* ------------------------------------------------------------------ */}
-      {/* BUTTONS                                                            */}
-      {/* ------------------------------------------------------------------ */}
+      {/* Connection status */}
       <SectionHeader
-        title="Buttons"
-        description="Four variants in three sizes"
+        title="Database Connection"
+        description="Supabase via PostgREST to ecos schema"
       />
-
-      <Card title="Button Variants">
-        <div className="space-y-6">
-          {['sm', 'md', 'lg'].map((size) => (
-            <div key={size}>
-              <p className="text-xs text-neutral-500 uppercase tracking-wider mb-3">
-                Size: {size}
-              </p>
-              <div className="flex flex-wrap gap-3">
-                <Button variant="primary" size={size}>
-                  Primary
-                </Button>
-                <Button variant="secondary" size={size}>
-                  Secondary
-                </Button>
-                <Button variant="danger" size={size}>
-                  Danger
-                </Button>
-                <Button variant="ghost" size={size}>
-                  Ghost
-                </Button>
-                <Button variant="primary" size={size} disabled>
-                  Disabled
-                </Button>
-              </div>
-            </div>
-          ))}
+      <Card>
+        <div className="flex items-center gap-3">
+          {connected === null && (
+            <span className="text-neutral-400">Checking connection...</span>
+          )}
+          {connected === true && (
+            <>
+              <span className="inline-block w-3 h-3 rounded-full bg-green-500" />
+              <span className="text-green-400 font-medium">
+                Connected to database
+              </span>
+            </>
+          )}
+          {connected === false && (
+            <>
+              <span className="inline-block w-3 h-3 rounded-full bg-red-500" />
+              <span className="text-red-400 font-medium">
+                Connection failed
+              </span>
+              {error && (
+                <span className="text-red-500 text-sm ml-2">{error}</span>
+              )}
+            </>
+          )}
         </div>
       </Card>
 
-      {/* ------------------------------------------------------------------ */}
-      {/* CARDS                                                              */}
-      {/* ------------------------------------------------------------------ */}
+      {/* Current identity */}
       <SectionHeader
-        title="Cards"
-        description="With and without titles, padding control"
+        title="Current Demo Identity"
+        description="Active role for this session"
       />
+      <Card>
+        {currentEmployee ? (
+          <div className="space-y-3">
+            <div className="flex items-center gap-3">
+              <span className="text-white font-medium text-lg">
+                {currentEmployee.first_name} {currentEmployee.last_name}
+              </span>
+              <Badge
+                variant={
+                  role === 'admin'
+                    ? 'accent'
+                    : role === 'manager'
+                      ? 'warning'
+                      : 'neutral'
+                }
+              >
+                {role}
+              </Badge>
+            </div>
+            <div className="text-sm text-neutral-400 space-y-1">
+              <p>
+                <span className="text-neutral-500">Title:</span>{' '}
+                {currentEmployee.title}
+              </p>
+              <p>
+                <span className="text-neutral-500">Department:</span>{' '}
+                {currentEmployee.departments?.name ?? 'N/A'}
+              </p>
+              <p>
+                <span className="text-neutral-500">Employee #:</span>{' '}
+                {currentEmployee.employee_number}
+              </p>
+            </div>
+          </div>
+        ) : (
+          <p className="text-neutral-500">No employee selected</p>
+        )}
+      </Card>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Card title="Card with Title">
-          <p className="text-neutral-400 text-sm">
-            This card has a title header with a bottom border separator.
-          </p>
-        </Card>
-
+      {/* Data counts */}
+      <SectionHeader
+        title="Seed Data Counts"
+        description="Records loaded from ecos schema"
+      />
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <Card>
-          <p className="text-neutral-400 text-sm">
-            This card has no title — just content inside.
-          </p>
-        </Card>
-
-        <Card title="No Padding Content" padding={false}>
-          <div className="bg-neutral-900 p-4">
-            <p className="text-neutral-400 text-sm">
-              Content area with padding=false. Useful for tables or custom
-              layouts.
+          <div className="text-center">
+            <p className="text-3xl font-bold text-white">
+              {counts?.departments ?? '--'}
             </p>
+            <p className="text-sm text-neutral-400 mt-1">Departments</p>
           </div>
         </Card>
-      </div>
-
-      {/* ------------------------------------------------------------------ */}
-      {/* BADGES                                                             */}
-      {/* ------------------------------------------------------------------ */}
-      <SectionHeader title="Badges" description="Five semantic variants" />
-
-      <Card>
-        <div className="flex flex-wrap gap-3">
-          <Badge variant="success">Success</Badge>
-          <Badge variant="warning">Warning</Badge>
-          <Badge variant="error">Error</Badge>
-          <Badge variant="neutral">Neutral</Badge>
-          <Badge variant="accent">Accent</Badge>
-        </div>
-      </Card>
-
-      {/* ------------------------------------------------------------------ */}
-      {/* TEXT INPUTS                                                        */}
-      {/* ------------------------------------------------------------------ */}
-      <SectionHeader
-        title="Text Inputs"
-        description="Normal, error, and disabled states"
-      />
-
-      <Card>
-        <div className="space-y-4">
-          <TextInput
-            label="Normal Input"
-            name="normal-input"
-            placeholder="Enter something..."
-            value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
-          />
-          <TextInput
-            label="Required Input"
-            name="required-input"
-            placeholder="This field is required"
-            required
-            value=""
-            onChange={() => {}}
-          />
-          <TextInput
-            label="Input with Error"
-            name="error-input"
-            placeholder="Something went wrong"
-            value="bad data"
-            onChange={() => {}}
-            error="This field contains an invalid value."
-          />
-          <TextInput
-            label="Disabled Input"
-            name="disabled-input"
-            placeholder="Cannot edit"
-            value="Read-only value"
-            onChange={() => {}}
-            disabled
-          />
-        </div>
-      </Card>
-
-      {/* ------------------------------------------------------------------ */}
-      {/* TEXTAREA                                                           */}
-      {/* ------------------------------------------------------------------ */}
-      <SectionHeader title="TextArea" description="Multi-line text input" />
-
-      <Card>
-        <TextArea
-          label="Description"
-          name="description"
-          placeholder="Enter a detailed description..."
-          value={textareaValue}
-          onChange={(e) => setTextareaValue(e.target.value)}
-          rows={4}
-        />
-      </Card>
-
-      {/* ------------------------------------------------------------------ */}
-      {/* CHECKBOXES                                                         */}
-      {/* ------------------------------------------------------------------ */}
-      <SectionHeader
-        title="Checkboxes"
-        description="Checked, unchecked, and with description"
-      />
-
-      <Card>
-        <div className="space-y-4">
-          <Checkbox
-            label="Checked checkbox"
-            name="check-1"
-            checked={checked1}
-            onChange={(e) => setChecked1(e.target.checked)}
-          />
-          <Checkbox
-            label="Unchecked checkbox"
-            name="check-2"
-            checked={checked2}
-            onChange={(e) => setChecked2(e.target.checked)}
-          />
-          <Checkbox
-            label="With description"
-            name="check-3"
-            checked={false}
-            onChange={() => {}}
-            description="This checkbox includes a description line beneath the label."
-          />
-          <Checkbox
-            label="Disabled checkbox"
-            name="check-4"
-            checked={true}
-            onChange={() => {}}
-            disabled
-          />
-        </div>
-      </Card>
-
-      {/* ------------------------------------------------------------------ */}
-      {/* SELECT                                                             */}
-      {/* ------------------------------------------------------------------ */}
-      <SectionHeader
-        title="Select"
-        description="Native dropdown with custom arrow"
-      />
-
-      <Card>
-        <div className="space-y-4">
-          <Select
-            label="Property Type"
-            name="property-type"
-            value={selectValue}
-            onChange={(e) => setSelectValue(e.target.value)}
-            options={selectOptions}
-            placeholder="Choose a type..."
-          />
-          <Select
-            label="Disabled Select"
-            name="disabled-select"
-            value="commercial"
-            onChange={() => {}}
-            options={selectOptions}
-            disabled
-          />
-        </div>
-      </Card>
-
-      {/* ------------------------------------------------------------------ */}
-      {/* SECTION HEADERS                                                    */}
-      {/* ------------------------------------------------------------------ */}
-      <SectionHeader
-        title="Section Headers"
-        description="With and without an action slot"
-      />
-
-      <Card>
-        <div className="space-y-6">
-          <SectionHeader
-            title="Without Action"
-            description="Just a title and description"
-          />
-          <SectionHeader
-            title="With Action"
-            description="Includes a button on the right"
-            action={
-              <Button variant="secondary" size="sm">
-                Add New
-              </Button>
-            }
-          />
-        </div>
-      </Card>
-
-      {/* ------------------------------------------------------------------ */}
-      {/* ALERTS                                                             */}
-      {/* ------------------------------------------------------------------ */}
-      <SectionHeader
-        title="Alerts"
-        description="Four variants with optional dismiss"
-      />
-
-      <div className="space-y-4">
-        {showAlerts.info && (
-          <Alert
-            variant="info"
-            title="Information"
-            dismissible
-            onDismiss={() =>
-              setShowAlerts((s) => ({ ...s, info: false }))
-            }
-          >
-            This is an informational alert. Click the X to dismiss.
-          </Alert>
-        )}
-        {showAlerts.success && (
-          <Alert
-            variant="success"
-            title="Success"
-            dismissible
-            onDismiss={() =>
-              setShowAlerts((s) => ({ ...s, success: false }))
-            }
-          >
-            Operation completed successfully.
-          </Alert>
-        )}
-        {showAlerts.warning && (
-          <Alert variant="warning" title="Warning">
-            This is a warning alert without a dismiss button.
-          </Alert>
-        )}
-        {showAlerts.error && (
-          <Alert variant="error" title="Error">
-            Something went wrong. Please try again.
-          </Alert>
-        )}
+        <Card>
+          <div className="text-center">
+            <p className="text-3xl font-bold text-white">
+              {counts?.employees ?? '--'}
+            </p>
+            <p className="text-sm text-neutral-400 mt-1">Employees</p>
+          </div>
+        </Card>
+        <Card>
+          <div className="text-center">
+            <p className="text-3xl font-bold text-white">
+              {counts?.agreements ?? '--'}
+            </p>
+            <p className="text-sm text-neutral-400 mt-1">Agreements</p>
+          </div>
+        </Card>
       </div>
     </div>
   )

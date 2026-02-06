@@ -98,6 +98,34 @@ export async function getAgreementsByEmployee(employeeId) {
 }
 
 /**
+ * Get agreements filtered by the current demo role.
+ * - employee: sees own agreements
+ * - manager: sees agreements from their department
+ * - admin: sees all agreements
+ * @param {'employee'|'manager'|'admin'} role
+ * @param {string} employeeId - current employee's UUID
+ * @param {string} departmentId - current employee's department UUID
+ */
+export async function getAgreementsForRole(role, employeeId, departmentId) {
+  let query = supabase
+    .from('agreements')
+    .select('*, employees(*, departments(*))')
+    .order('updated_at', { ascending: false })
+
+  if (role === 'employee') {
+    query = query.eq('employee_id', employeeId)
+  } else if (role === 'manager') {
+    query = query.eq('employees.department_id', departmentId)
+  }
+  // admin sees all — no filter
+
+  const { data, error } = await query
+
+  if (error) console.error('getAgreementsForRole error:', error)
+  return { data, error }
+}
+
+/**
  * Get agreements expiring within N days from now.
  */
 export async function getExpiringAgreements(daysUntilExpiry = 30) {

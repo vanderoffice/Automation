@@ -12,6 +12,7 @@ export {
   updateAgreement,
   getAgreementsByStatus,
   getAgreementsByEmployee,
+  getAgreementsForRole,
   getExpiringAgreements,
 } from './agreements.js'
 

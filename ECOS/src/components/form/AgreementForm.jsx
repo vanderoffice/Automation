@@ -36,7 +36,7 @@ function getInitialState() {
     workPhone: '',
     workLocation: '',
     fiscalYear: getFiscalYear(),
-    acknowledgments: {},
+    acknowledged: false,
     selectedGroups: [],
   }
 }
@@ -81,14 +81,8 @@ function AgreementForm({ currentEmployee }) {
     setFormState((prev) => ({ ...prev, track: null }))
   }
 
-  const handleAcknowledgment = (sectionId) => {
-    setFormState((prev) => ({
-      ...prev,
-      acknowledgments: {
-        ...prev.acknowledgments,
-        [sectionId]: !prev.acknowledgments[sectionId],
-      },
-    }))
+  const handleAcknowledgmentToggle = () => {
+    setFormState((prev) => ({ ...prev, acknowledged: !prev.acknowledged }))
   }
 
   const handleGroupToggle = (groupId) => {
@@ -123,9 +117,8 @@ function AgreementForm({ currentEmployee }) {
       validationErrors.selectedGroups = 'At least one access group must be selected'
     }
 
-    const unacknowledged = allSections.filter((s) => !formState.acknowledgments[s.id])
-    if (unacknowledged.length > 0) {
-      validationErrors.acknowledgments = 'All security sections must be acknowledged (' + unacknowledged.length + ' remaining)'
+    if (!formState.acknowledged) {
+      validationErrors.acknowledged = 'You must acknowledge the security requirements before submitting'
     }
 
     return {
@@ -405,8 +398,8 @@ function AgreementForm({ currentEmployee }) {
         sections={securityRequirements}
         adminSection={adminResponsibilities}
         showAdminSection={showAdminSection}
-        acknowledgments={formState.acknowledgments}
-        onChange={handleAcknowledgment}
+        acknowledged={formState.acknowledged}
+        onToggle={handleAcknowledgmentToggle}
       />
       <AccessGroupSection
         selectedGroups={formState.selectedGroups}

@@ -1,73 +1,56 @@
 import { SectionHeader } from '../ui/SectionHeader'
 import { Card } from '../ui/Card'
-import { Checkbox } from '../ui/Checkbox'
 
-function AcknowledgmentSection({ sections, acknowledgments, onChange, showAdminSection = false, adminSection }) {
+function AcknowledgmentSection({ sections, acknowledged, onToggle, showAdminSection = false, adminSection }) {
   const allSections = showAdminSection && adminSection
     ? [...sections, adminSection]
     : sections
 
-  const totalCount = allSections.length
-  const acknowledgedCount = allSections.filter((s) => acknowledgments[s.id]).length
-
-  const handleSelectAll = () => {
-    allSections.forEach((s) => {
-      if (!acknowledgments[s.id]) {
-        onChange(s.id)
-      }
-    })
-  }
-
-  const progressColor =
-    acknowledgedCount === totalCount
-      ? 'text-green-500'
-      : acknowledgedCount > 0
-        ? 'text-yellow-500'
-        : 'text-neutral-500'
+  const sectionTitles = allSections.map((s) => s.title)
 
   return (
     <div>
-      <SectionHeader
-        title="Acknowledgments"
-        action={
-          <button
-            type="button"
-            onClick={handleSelectAll}
-            className="text-xs text-orange-400 hover:text-orange-300 transition-colors"
-          >
-            Select All
-          </button>
-        }
-      />
+      <SectionHeader title="Acknowledgment" />
 
       <Card>
-        <div className="space-y-4">
-          {sections.map((section) => (
-            <Checkbox
-              key={section.id}
-              name={'ack-' + section.id}
-              label={'I have read and understand: ' + section.title}
-              checked={!!acknowledgments[section.id]}
-              onChange={() => onChange(section.id)}
-            />
-          ))}
+        <button
+          type="button"
+          onClick={onToggle}
+          className={
+            'w-full flex items-start gap-4 p-4 rounded-lg border-2 text-left transition-all duration-200 ' +
+            (acknowledged
+              ? 'border-green-500/50 bg-green-500/5'
+              : 'border-neutral-700 bg-neutral-900/30 hover:border-orange-500/40')
+          }
+        >
+          {/* Custom checkbox */}
+          <div
+            className={
+              'flex-shrink-0 mt-0.5 w-6 h-6 rounded border-2 flex items-center justify-center transition-all ' +
+              (acknowledged
+                ? 'bg-green-500 border-green-500'
+                : 'border-neutral-500 bg-transparent')
+            }
+          >
+            {acknowledged && (
+              <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="20 6 9 17 4 12" />
+              </svg>
+            )}
+          </div>
 
-          {showAdminSection && adminSection && (
-            <div className="border-t border-neutral-800 pt-4 mt-4">
-              <Checkbox
-                name={'ack-' + adminSection.id}
-                label={'I have read and understand: ' + adminSection.title}
-                checked={!!acknowledgments[adminSection.id]}
-                onChange={() => onChange(adminSection.id)}
-                description="Required for users with administrative access"
-              />
-            </div>
-          )}
-        </div>
-
-        <p className={'text-xs mt-4 ' + progressColor}>
-          {acknowledgedCount} of {totalCount} acknowledged
-        </p>
+          <div className="min-w-0">
+            <p className={'font-medium ' + (acknowledged ? 'text-green-400' : 'text-white')}>
+              I have read and understand all security requirements
+            </p>
+            <p className="text-sm text-neutral-400 mt-1">
+              Covering: {sectionTitles.join(', ')}
+            </p>
+            <p className="text-xs text-neutral-500 mt-2">
+              Per SAM 5320, your typed-name signature below certifies you accept personal responsibility to comply with these requirements.
+            </p>
+          </div>
+        </button>
       </Card>
     </div>
   )

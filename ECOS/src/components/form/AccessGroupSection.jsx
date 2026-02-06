@@ -33,7 +33,7 @@ function AccessGroupSection({ selectedGroups, onChange, track }) {
     <div>
       <SectionHeader
         title="ECOS Access Groups"
-        description="Select the system access levels required for this employee's role."
+        description="Select the system access levels required for this role. Selections are requests only — your manager and department admin must both approve before access is granted."
       />
       <Card>
         <div className="space-y-3">

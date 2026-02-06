@@ -47,7 +47,7 @@ function AcknowledgmentSection({ sections, acknowledged, onToggle, showAdminSect
               Covering: {sectionTitles.join(', ')}
             </p>
             <p className="text-xs text-neutral-500 mt-2">
-              Per SAM 5320, your typed-name signature below certifies you accept personal responsibility to comply with these requirements.
+              Required before submission. You will sign electronically after submitting.
             </p>
           </div>
         </button>

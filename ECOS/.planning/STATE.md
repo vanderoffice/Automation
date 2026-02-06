@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-05)
 
 **Core value:** A visually compelling, fully functional demo that makes the current PDF process look obsolete -- polished enough to pitch to executives and backed by real data persistence.
-**Current focus:** Phase 5 complete — Role switcher, demo data, and polish layer all done. Demo is exec-presentation ready. Next: Phase 6 (Admin Dashboard).
+**Current focus:** Phase 6 in progress — Admin dashboard compliance overview complete. Next: approval queue (06-02).
 
 ## Current Position
 
-Phase: 5 of 7 (Role Switcher & Demo)
-Plan: 3 of 3 in current phase
-Status: Phase complete
-Last activity: 2026-02-06 — Completed 05-03-PLAN.md
+Phase: 6 of 7 (Admin Dashboard)
+Plan: 1 of 3 in current phase
+Status: In progress
+Last activity: 2026-02-06 — Completed 06-01-PLAN.md
 
-Progress: ███████████████████░ 71%
+Progress: ████████████████████░ 76%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 15
+- Total plans completed: 16
 - Average duration: 8 min
-- Total execution time: 2 hours
+- Total execution time: 2h 3min
 
 **By Phase:**
 
@@ -32,9 +32,10 @@ Progress: ███████████████████░ 71%
 | 3. Form UI | 3/3 | 15 min | 5 min |
 | 4. Signature Workflow | 3/3 | 45 min | 15 min |
 | 5. Role Switcher & Demo | 3/3 | 39 min | 13 min |
+| 6. Admin Dashboard | 1/3 | 3 min | 3 min |
 
 **Recent Trend:**
-- Last 5 plans: 7 min, 41 min, 2 min, 7 min, 30 min
+- Last 5 plans: 41 min, 2 min, 7 min, 30 min, 3 min
 - Trend: —
 
 ## Accumulated Context
@@ -83,6 +84,9 @@ Recent decisions affecting current work:
 | 05-02 | SQL-only reset script, no in-app reset | Overkill for exec demo audience |
 | 05-03 | Existing animate-in sufficient for role switch transitions | No explicit transition state needed — key remount triggers fadeIn |
 | 05-03 | Skipped AgreementPage existing-agreement notice | Would require additional API call, per plan guidance |
+| 06-01 | Client-side stats from single getAgreements() call | Avoids multiple API round-trips for dashboard aggregation |
+| 06-01 | Department table sorted worst-first | Draws executive attention to departments needing action |
+| 06-01 | Parallel Promise.all for both API calls | Faster initial dashboard load |
 
 ### Deferred Issues
 
@@ -95,5 +99,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-02-06
-Stopped at: Completed 05-03-PLAN.md — Phase 5 complete. Demo polish with contextual hints, status badges, and smooth transitions. Next: Phase 6 (Admin Dashboard).
+Stopped at: Completed 06-01-PLAN.md — Admin dashboard compliance overview with stat cards, department breakdown, and expiring agreements section. Next: 06-02 (Approval Queue).
 Resume file: None

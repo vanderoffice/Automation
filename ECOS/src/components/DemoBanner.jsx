@@ -16,7 +16,9 @@ function getHint(role, pathname) {
     if (role === 'admin') return 'After manager approval, agreements come to you for final sign-off.'
   }
   if (pathname.startsWith('/dashboard')) {
-    return 'The admin dashboard shows compliance status across all departments.'
+    if (role === 'admin') return 'This dashboard shows organization-wide compliance. Try signing a pending approval, then check the audit trail.'
+    if (role === 'manager') return 'The admin dashboard shows full compliance data. Switch to an admin role to see approval actions.'
+    return 'The admin dashboard is an admin-only view. Switch to an admin role to explore.'
   }
   return null
 }

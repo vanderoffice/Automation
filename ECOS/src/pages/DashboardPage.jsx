@@ -149,6 +149,7 @@ export default function DashboardPage() {
   const [auditLog, setAuditLog] = useState([])
   const [auditSearch, setAuditSearch] = useState('')
   const [auditFilter, setAuditFilter] = useState('')
+  const [expandedAudit, setExpandedAudit] = useState(new Set())
   const [lastUpdated, setLastUpdated] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -192,7 +193,7 @@ export default function DashboardPage() {
     return (
       <div className="animate-in">
         <h1 className="text-2xl font-bold text-white mb-2">Admin Dashboard</h1>
-        <p className="text-neutral-400 mb-8">Compliance and audit dashboard</p>
+        <p className="text-neutral-400">Compliance and audit dashboard</p>
         <Card>
           <p className="text-neutral-500">Loading...</p>
         </Card>
@@ -204,7 +205,7 @@ export default function DashboardPage() {
     return (
       <div className="animate-in">
         <h1 className="text-2xl font-bold text-white mb-2">Admin Dashboard</h1>
-        <p className="text-neutral-400 mb-8">Compliance and audit dashboard</p>
+        <p className="text-neutral-400">Compliance and audit dashboard</p>
         <Card>
           <p className="text-red-400">{error}</p>
         </Card>
@@ -241,13 +242,18 @@ export default function DashboardPage() {
     loadData()
   }
 
+  const fyStart = new Date().getMonth() >= 6 ? new Date().getFullYear() : new Date().getFullYear() - 1
+  const fyLabel = 'FY ' + fyStart + '-' + (fyStart + 1)
+
   return (
-    <div className="animate-in">
-      <h1 className="text-2xl font-bold text-white mb-2">Admin Dashboard</h1>
-      <p className="text-neutral-400 mb-8">Compliance and audit dashboard</p>
+    <div className="animate-in space-y-6">
+      <div>
+        <h1 className="text-2xl font-bold text-white mb-2">Admin Dashboard</h1>
+        <p className="text-neutral-400">{fyLabel} · {stats.total} agreements tracked</p>
+      </div>
 
       {/* Summary stat cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card>
           <div>
             <p className="text-3xl font-bold text-white">{stats.total}</p>
@@ -280,7 +286,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Pending Approvals queue */}
-      <div className="mb-8">
+      <div>
         <Card title={'Pending Approvals (' + pendingAdmin.length + ')'}>
           {pendingAdmin.length === 0 ? (
             <div className="flex items-center gap-2">
@@ -365,7 +371,7 @@ export default function DashboardPage() {
       </Card>
 
       {/* Expiring Soon */}
-      <div className="mt-8">
+      <div>
         <Card title="Expiring Soon">
           {expiring.length === 0 ? (
             <div className="flex items-center gap-2">
@@ -401,7 +407,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Audit Trail */}
-      <div className="mt-8">
+      <div>
         <Card title="Audit Trail">
           <div className="flex flex-col sm:flex-row gap-3 mb-4">
             <TextInput
@@ -453,13 +459,38 @@ export default function DashboardPage() {
                     : details.from_status && details.to_status
                       ? details.from_status + ' → ' + details.to_status
                       : null
+                  const isExpanded = expandedAudit.has(entry.id)
+                  const detailEntries = Object.entries(details)
                   return (
-                    <div key={entry.id} className="py-2.5 flex items-center gap-3 text-sm">
-                      <span className="text-xs text-neutral-500 w-36 flex-shrink-0">{ts}</span>
-                      <Badge variant={variant}>{label}</Badge>
-                      <span className="text-neutral-300 truncate flex-1">{actor}</span>
-                      {detailSnippet && (
-                        <span className="text-xs text-neutral-500 flex-shrink-0">{detailSnippet}</span>
+                    <div key={entry.id}>
+                      <div
+                        className="py-2.5 flex items-center gap-3 text-sm cursor-pointer hover:bg-neutral-900/30 -mx-1 px-1 rounded transition-colors"
+                        onClick={() => {
+                          setExpandedAudit((prev) => {
+                            const next = new Set(prev)
+                            if (next.has(entry.id)) next.delete(entry.id)
+                            else next.add(entry.id)
+                            return next
+                          })
+                        }}
+                      >
+                        <span className={'text-neutral-600 text-xs flex-shrink-0 transition-transform ' + (isExpanded ? 'rotate-90' : '')}>&#9654;</span>
+                        <span className="text-xs text-neutral-500 w-36 flex-shrink-0">{ts}</span>
+                        <Badge variant={variant}>{label}</Badge>
+                        <span className="text-neutral-300 truncate flex-1">{actor}</span>
+                        {detailSnippet && (
+                          <span className="text-xs text-neutral-500 flex-shrink-0">{detailSnippet}</span>
+                        )}
+                      </div>
+                      {isExpanded && detailEntries.length > 0 && (
+                        <div className="ml-6 mb-2 rounded bg-neutral-900/50 px-4 py-3 font-mono text-xs text-neutral-400 space-y-1">
+                          {detailEntries.map(([k, v]) => (
+                            <div key={k}>
+                              <span className="text-neutral-500">{k}:</span>{' '}
+                              <span className="text-neutral-300">{typeof v === 'object' ? JSON.stringify(v) : String(v)}</span>
+                            </div>
+                          ))}
+                        </div>
                       )}
                     </div>
                   )
@@ -472,7 +503,7 @@ export default function DashboardPage() {
 
       {/* Last updated */}
       {lastUpdated && (
-        <p className="text-xs text-neutral-600 mt-6 text-right">
+        <p className="text-xs text-neutral-600 text-right">
           Last updated {lastUpdated.toLocaleTimeString()}
         </p>
       )}

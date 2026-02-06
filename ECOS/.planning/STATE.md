@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-05)
 
 **Core value:** A visually compelling, fully functional demo that makes the current PDF process look obsolete -- polished enough to pitch to executives and backed by real data persistence.
-**Current focus:** Phase 5 in progress — Role Switcher UI done (05-01). Global switcher in sidebar, all pages respond to role changes. Next: 05-02 (Demo Data Seeding).
+**Current focus:** Phase 5 in progress — Role Switcher UI (05-01) and Demo Data Seeding (05-02) done. 13 agreements across all workflow states, reset script ready. Next: 05-03 (Demo Polish).
 
 ## Current Position
 
 Phase: 5 of 7 (Role Switcher & Demo)
-Plan: 1 of 3 in current phase
+Plan: 2 of 3 in current phase
 Status: In progress
-Last activity: 2026-02-06 — Completed 05-01-PLAN.md
+Last activity: 2026-02-06 — Completed 05-02-PLAN.md
 
-Progress: ██████████████████░░ 62%
+Progress: ██████████████████░░ 67%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 13
+- Total plans completed: 14
 - Average duration: 7 min
-- Total execution time: 1.4 hours
+- Total execution time: 1.5 hours
 
 **By Phase:**
 
@@ -31,10 +31,10 @@ Progress: ██████████████████░░ 62%
 | 2. Database & API | 3/3 | 18 min | 6 min |
 | 3. Form UI | 3/3 | 15 min | 5 min |
 | 4. Signature Workflow | 3/3 | 45 min | 15 min |
-| 5. Role Switcher & Demo | 1/3 | 2 min | 2 min |
+| 5. Role Switcher & Demo | 2/3 | 9 min | 5 min |
 
 **Recent Trend:**
-- Last 5 plans: 2 min, 6 min, 7 min, 41 min, 2 min
+- Last 5 plans: 6 min, 7 min, 41 min, 2 min, 7 min
 - Trend: —
 
 ## Accumulated Context
@@ -79,6 +79,8 @@ Recent decisions affecting current work:
 | 04-03 | SignatureTimeline as local component | Single-use, avoids file bloat |
 | 05-01 | React key remount for form reset | Simpler than useEffect; resets all state at once |
 | 05-01 | Self-contained RoleSwitcher | Sidebar doesn't import useRole, component manages own context |
+| 05-02 | Additive migration (005) not modifying 004 | Preserves migration history |
+| 05-02 | SQL-only reset script, no in-app reset | Overkill for exec demo audience |
 
 ### Deferred Issues
 
@@ -91,5 +93,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-02-06
-Stopped at: Completed 05-01-PLAN.md — Role switcher UI in sidebar. All pages respond to role changes. Next: 05-02 (Demo Data Seeding).
+Stopped at: Completed 05-02-PLAN.md — 13 agreements across all workflow states, reset script ready. Next: 05-03 (Demo Polish).
 Resume file: None

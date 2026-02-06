@@ -73,7 +73,7 @@ Plans:
 
 Plans:
 - [x] 05-01: Role switcher UI — persistent role selector, context-aware view switching
-- [ ] 05-02: Demo data seeding — fictional employees/departments, pre-populated agreements in various workflow states
+- [x] 05-02: Demo data seeding — fictional employees/departments, pre-populated agreements in various workflow states
 - [ ] 05-03: Demo polish — guided flow hints, smooth transitions between perspectives
 
 ### Phase 6: Admin Dashboard
@@ -110,6 +110,6 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 | 2. Database & API | 3/3 | Complete | 2026-02-06 |
 | 3. Form UI | 3/3 | Complete | 2026-02-06 |
 | 4. Signature Workflow | 3/3 | Complete | 2026-02-06 |
-| 5. Role Switcher & Demo | 1/3 | In progress | - |
+| 5. Role Switcher & Demo | 2/3 | In progress | - |
 | 6. Admin Dashboard | 0/3 | Not started | - |
 | 7. Deployment & Polish | 0/3 | Not started | - |

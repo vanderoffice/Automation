@@ -5,33 +5,33 @@
 See: .planning/PROJECT.md (updated 2026-02-05)
 
 **Core value:** A visually compelling, fully functional demo that makes the current PDF process look obsolete -- polished enough to pitch to executives and backed by real data persistence.
-**Current focus:** Phase 2 in progress — Database & API (2/3 plans complete)
+**Current focus:** Phase 2 complete — Database & API (3/3 plans done). Ready for Phase 3.
 
 ## Current Position
 
-Phase: 2 of 7 (Database & API)
-Plan: 2 of 3 in current phase
-Status: In progress
-Last activity: 2026-02-06 — Completed 02-02-PLAN.md
+Phase: 2 of 7 (Database & API) — COMPLETE
+Plan: 3 of 3 in current phase
+Status: Phase complete
+Last activity: 2026-02-06 — Completed 02-03-PLAN.md
 
-Progress: ██████░░░░ 29%
+Progress: ███████░░░ 29%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 5
-- Average duration: 4 min
-- Total execution time: 0.3 hours
+- Total plans completed: 6
+- Average duration: 5 min
+- Total execution time: 0.5 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 1. Foundation | 3/3 | 12 min | 4 min |
-| 2. Database & API | 2/3 | 8 min | 4 min |
+| 2. Database & API | 3/3 | 18 min | 6 min |
 
 **Recent Trend:**
-- Last 5 plans: 3 min, 3 min, 6 min, 4 min, 4 min
+- Last 5 plans: 3 min, 6 min, 4 min, 4 min, 10 min
 - Trend: —
 
 ## Accumulated Context
@@ -55,6 +55,9 @@ Recent decisions affecting current work:
 | 02-01 | IF NOT EXISTS on all CREATE TABLE/INDEX | Idempotent migrations for safe re-runs |
 | 02-02 | persistSession: false on Supabase client | Demo app with simulated auth, not real Supabase Auth |
 | 02-02 | db: { schema: 'ecos' } at client level | All queries target ecos schema automatically |
+| 02-03 | Demo-permissive RLS policies | anon gets full access; production patterns in SQL comments |
+| 02-03 | Role filtering at API layer, not RLS | getAgreementsForRole filters by role param; simpler for demo |
+| 02-03 | localStorage for selected employee ID | Persists demo role across page reloads |
 
 ### Deferred Issues
 
@@ -67,5 +70,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-02-06
-Stopped at: Completed 02-02-PLAN.md — Supabase client + 22 API helper functions across 5 modules
+Stopped at: Completed 02-03-PLAN.md — Phase 2 complete. RLS on all tables, 8 employees seeded, role context with switchable identity, full stack proven.
 Resume file: None

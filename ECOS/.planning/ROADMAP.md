@@ -11,7 +11,7 @@ None
 ## Phases
 
 - [x] **Phase 1: Foundation** *(Complete)* - Project scaffolding, Docker config, Tailwind design system, dev environment
-- [ ] **Phase 2: Database & API** - Supabase schema, PostgREST endpoints, RLS policies
+- [x] **Phase 2: Database & API** *(Complete)* - Supabase schema, PostgREST endpoints, RLS policies
 - [ ] **Phase 3: Form UI** - Agreement form with both tracks, security content, access groups
 - [ ] **Phase 4: Signature Workflow** - Three-party signing flow, audit metadata, typed-name signatures
 - [ ] **Phase 5: Role Switcher & Demo** - Perspective switching UI, fictional data seeding, demo experience
@@ -41,7 +41,7 @@ Plans:
 Plans:
 - [x] 02-01: Schema design — forms, agreements, signatures, audit_log tables
 - [x] 02-02: PostgREST API layer — endpoints for CRUD operations, signature submission, workflow transitions
-- [ ] 02-03: RLS policies and role simulation — row-level security for demo role switching
+- [x] 02-03: RLS policies and role simulation — row-level security for demo role switching
 
 ### Phase 3: Form UI
 **Goal**: Complete, interactive ECOS agreement form with New/Updated User and Annual Renewal tracks, streamlined security content (pages 9-11), access group checkboxes, and form validation
@@ -107,7 +107,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 | Phase | Plans Complete | Status | Completed |
 |-------|---------------|--------|-----------|
 | 1. Foundation | 3/3 | Complete | 2026-02-06 |
-| 2. Database & API | 2/3 | In progress | - |
+| 2. Database & API | 3/3 | Complete | 2026-02-06 |
 | 3. Form UI | 0/3 | Not started | - |
 | 4. Signature Workflow | 0/3 | Not started | - |
 | 5. Role Switcher & Demo | 0/3 | Not started | - |

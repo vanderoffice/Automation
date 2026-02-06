@@ -1,4 +1,5 @@
 import { NavLink } from 'react-router-dom'
+import RoleSwitcher from './RoleSwitcher'
 
 function NavItem({ to, label, icon, end, onClick }) {
   return (
@@ -36,9 +37,9 @@ export default function Sidebar() {
         <NavItem to="/dashboard" label="Admin Dashboard" icon="📊" />
       </nav>
 
-      {/* Footer — Role switcher placeholder (Phase 5) */}
+      {/* Footer — Role switcher */}
       <div className="p-4 border-t border-neutral-800">
-        {/* Role switcher placeholder — Phase 5 */}
+        <RoleSwitcher />
       </div>
     </aside>
   )
@@ -72,9 +73,9 @@ export function MobileNav({ isOpen, onClose }) {
           <NavItem to="/dashboard" label="Admin Dashboard" icon="📊" onClick={onClose} />
         </nav>
 
-        {/* Footer — Role switcher placeholder (Phase 5) */}
+        {/* Footer — Role switcher */}
         <div className="p-4 border-t border-neutral-800">
-          {/* Role switcher placeholder — Phase 5 */}
+          <RoleSwitcher />
         </div>
       </div>
     </>

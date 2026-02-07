@@ -37,9 +37,18 @@ export default function Sidebar() {
         <NavItem to="/dashboard" label="Admin Dashboard" icon="📊" />
       </nav>
 
-      {/* Footer — Role switcher */}
-      <div className="p-4 border-t border-neutral-800">
-        <RoleSwitcher />
+      {/* Footer */}
+      <div className="border-t border-neutral-800">
+        <a
+          href="https://vanderdev.net"
+          className="w-full flex items-center gap-3 px-6 py-3 text-xs font-medium text-neutral-500 hover:text-orange-400 transition-colors duration-200"
+        >
+          <span className="text-sm">←</span>
+          VanderDev Home
+        </a>
+        <div className="px-4 pb-4">
+          <RoleSwitcher />
+        </div>
       </div>
     </aside>
   )
@@ -73,9 +82,18 @@ export function MobileNav({ isOpen, onClose }) {
           <NavItem to="/dashboard" label="Admin Dashboard" icon="📊" onClick={onClose} />
         </nav>
 
-        {/* Footer — Role switcher */}
-        <div className="p-4 border-t border-neutral-800">
-          <RoleSwitcher />
+        {/* Footer */}
+        <div className="border-t border-neutral-800">
+          <a
+            href="https://vanderdev.net"
+            className="w-full flex items-center gap-3 px-6 py-3 text-xs font-medium text-neutral-500 hover:text-orange-400 transition-colors duration-200"
+          >
+            <span className="text-sm">←</span>
+            VanderDev Home
+          </a>
+          <div className="px-4 pb-4">
+            <RoleSwitcher />
+          </div>
         </div>
       </div>
     </>

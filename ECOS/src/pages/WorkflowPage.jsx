@@ -122,7 +122,7 @@ function CompactAgreementCard({ agreement, signatures, role, currentEmployee, on
     : ''
 
   return (
-    <div className="rounded-lg bg-[#0b0b0b] border border-neutral-800 glow-box transition-all">
+    <div className={'rounded-lg bg-[#0b0b0b] border border-neutral-800 glow-box transition-all' + (isExpanded ? ' sm:col-span-2' : '')}>
       {/* Collapsed header — always visible */}
       <div
         className="flex items-center gap-3 p-3 cursor-pointer hover:bg-white/[0.02] transition-colors"

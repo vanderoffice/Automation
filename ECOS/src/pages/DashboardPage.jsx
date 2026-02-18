@@ -369,7 +369,7 @@ function ApprovalsTab({ pendingAdmin, signerName, expandedApproval, onExpandAppr
         return (
           <div
             key={a.id}
-            className={'rounded-lg bg-neutral-900/50 ' + urgencyBorder(a.updated_at) + ' transition-all'}
+            className={'rounded-lg bg-neutral-900/50 ' + urgencyBorder(a.updated_at) + ' transition-all' + (isExpanded ? ' sm:col-span-2' : '')}
           >
             <div
               className="flex items-center justify-between gap-3 p-3 cursor-pointer hover:bg-white/[0.02] transition-colors"

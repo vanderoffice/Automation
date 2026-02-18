@@ -488,7 +488,7 @@ export default function WorkflowPage() {
           {tabItems.length === 0 ? (
             <Card>{search ? <p className="text-neutral-500 text-sm">No agreements match "{search}"</p> : emptyState()}</Card>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 items-start">
               {tabItems.map((a) => (
                 <CompactAgreementCard
                   key={a.id}

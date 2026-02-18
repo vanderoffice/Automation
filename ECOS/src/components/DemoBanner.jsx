@@ -49,7 +49,7 @@ export default function DemoBanner() {
   }
 
   return (
-    <div className="mb-4 flex items-center gap-3 px-4 py-2.5 rounded-lg bg-orange-500/10 border border-orange-500/20 text-sm text-orange-300/90">
+    <div data-demo-banner className="mb-4 flex items-center gap-3 px-4 py-2.5 rounded-lg bg-orange-500/10 border border-orange-500/20 text-sm text-orange-300/90">
       <span className="flex-shrink-0 text-orange-500">
         <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <circle cx="12" cy="12" r="10" />

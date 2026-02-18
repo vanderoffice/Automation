@@ -107,3 +107,88 @@ main {
     transform: translateY(0);
   }
 }
+
+/* ============================================================================
+   RESPONSIVE HELPERS
+   ============================================================================ */
+
+/* Hide scrollbar on TabBar horizontal scroll */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* ============================================================================
+   PRINT STYLES
+   ============================================================================ */
+
+@media print {
+  /* White background for paper */
+  body {
+    background-color: #ffffff;
+    color: #111111;
+  }
+
+  /* Hide navigation chrome */
+  aside,
+  nav,
+  .no-print,
+  [data-demo-banner],
+  button {
+    display: none !important;
+  }
+
+  /* Allow print buttons to remain hidden but let content fill */
+  main {
+    margin: 0 !important;
+    padding: 1rem !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  /* Disable dark card styles */
+  .glow-box,
+  [class*="bg-neutral-"],
+  [class*="bg-[#0b0b0b]"] {
+    background: #ffffff !important;
+    border: 1px solid #e5e5e5 !important;
+    box-shadow: none !important;
+  }
+
+  /* Text color overrides for readability */
+  .text-white,
+  .text-neutral-300,
+  .text-neutral-400 {
+    color: #111111 !important;
+  }
+  .text-neutral-500 {
+    color: #555555 !important;
+  }
+
+  /* Badge styling for print */
+  [class*="bg-green-500"],
+  [class*="bg-orange-500"] {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Progress bars need color */
+  .h-2 {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Expand grids to single column for paper */
+  .grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Remove animations */
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+}

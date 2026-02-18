@@ -1,10 +1,16 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { useRole } from '../context/RoleContext'
 import { Card } from '../components/ui/Card'
 import { Badge } from '../components/ui/Badge'
+import { TabBar } from '../components/ui/TabBar'
+import { TextInput } from '../components/ui/TextInput'
+import { Select } from '../components/ui/Select'
 import { Checkbox } from '../components/ui/Checkbox'
 import { SignatureBlock } from '../components/form/SignatureBlock'
+import { MiniProgressDots } from '../components/workflow/MiniProgressDots'
+import { StatusBadge } from '../components/workflow/StatusBadge'
+import { WorkflowTimeline, formatRelativeTime } from '../components/workflow/WorkflowTimeline'
 import { accessGroups } from '../data/accessGroups'
 import { saveAccessGroups } from '../lib/api/accessGroups'
 import {
@@ -15,22 +21,6 @@ import {
   advanceWorkflow,
   logAction,
 } from '../lib/api/index.js'
-
-const STATUS_LABELS = {
-  draft: 'Draft',
-  pending_employee: 'Pending Employee',
-  pending_manager: 'Pending Manager',
-  pending_admin: 'Pending Admin',
-  completed: 'Completed',
-}
-
-const STATUS_VARIANTS = {
-  draft: 'neutral',
-  pending_employee: 'warning',
-  pending_manager: 'warning',
-  pending_admin: 'warning',
-  completed: 'success',
-}
 
 const TRACK_LABELS = {
   new_updated: 'New / Updated',
@@ -49,96 +39,41 @@ const TIMELINE_STEPS = [
   { role: 'admin', label: 'Admin' },
 ]
 
-function formatRelativeTime(dateStr) {
-  const date = new Date(dateStr)
-  const now = new Date()
-  const diffMs = now - date
-  const diffSec = Math.floor(diffMs / 1000)
-  const diffMin = Math.floor(diffSec / 60)
-  const diffHr = Math.floor(diffMin / 60)
-  const diffDay = Math.floor(diffHr / 24)
+const SORT_OPTIONS = [
+  { value: 'wait', label: 'Wait time' },
+  { value: 'recent', label: 'Most recent' },
+  { value: 'name', label: 'Name A-Z' },
+  { value: 'department', label: 'Department' },
+]
 
-  if (diffSec < 60) return 'Just now'
-  if (diffMin < 60) return diffMin + 'm ago'
-  if (diffHr < 24) return diffHr + 'h ago'
-  if (diffDay < 7) return diffDay + 'd ago'
-  return date.toLocaleDateString()
-}
+// formatRelativeTime imported from WorkflowTimeline
 
-function SignatureTimeline({ signatures, status }) {
+// SignatureTimeline replaced by WorkflowTimeline — see adapter below
+
+function buildTimelineData(signatures, status) {
   const sigByRole = {}
   for (const sig of signatures) {
     sigByRole[sig.signer_role] = sig
   }
-
   const currentPendingRole = SIGNING_ROLES_BY_STATUS[status] || null
-
-  return (
-    <div className="relative ml-1">
-      {TIMELINE_STEPS.map((step, i) => {
-        const sig = sigByRole[step.role]
-        const isSigned = !!sig
-        const isCurrent = step.role === currentPendingRole
-        const isFuture = !isSigned && !isCurrent
-        const isLast = i === TIMELINE_STEPS.length - 1
-
-        return (
-          <div key={step.role} className="relative flex items-start gap-3 pb-6 last:pb-0">
-            {/* Vertical line */}
-            {!isLast && (
-              <div
-                className={
-                  'absolute left-[7px] top-[18px] w-0.5 h-[calc(100%-10px)] ' +
-                  (isSigned ? 'bg-green-500/40' : 'bg-neutral-700')
-                }
-              />
-            )}
-
-            {/* Dot */}
-            <div className="relative flex-shrink-0 mt-0.5">
-              {isSigned ? (
-                <div className="w-4 h-4 rounded-full bg-green-500/20 border-2 border-green-500 flex items-center justify-center">
-                  <svg className="w-2.5 h-2.5 text-green-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                    <polyline points="20 6 9 17 4 12" />
-                  </svg>
-                </div>
-              ) : isCurrent ? (
-                <div className="w-4 h-4 rounded-full bg-orange-500/20 border-2 border-orange-500 animate-pulse" />
-              ) : (
-                <div className="w-4 h-4 rounded-full bg-neutral-800 border-2 border-neutral-600" />
-              )}
-            </div>
-
-            {/* Content */}
-            <div className="min-w-0">
-              <p className={'text-sm font-medium ' + (isSigned ? 'text-green-400' : isCurrent ? 'text-orange-400' : 'text-neutral-500')}>
-                {step.label}
-              </p>
-              {isSigned ? (
-                <div className="mt-0.5">
-                  <p className="text-xs text-neutral-400">{sig.typed_name}</p>
-                  <p className="text-xs text-neutral-500 font-mono">{formatRelativeTime(sig.signed_at)}</p>
-                </div>
-              ) : isCurrent ? (
-                <p className="text-xs text-orange-400/70 mt-0.5">Awaiting signature</p>
-              ) : (
-                <p className="text-xs text-neutral-600 mt-0.5">Pending</p>
-              )}
-            </div>
-          </div>
-        )
-      })}
-    </div>
-  )
+  const data = {}
+  for (const step of TIMELINE_STEPS) {
+    const sig = sigByRole[step.role]
+    data[step.role] = sig
+      ? { completed: true, name: sig.typed_name, timestamp: sig.signed_at }
+      : { completed: false }
+  }
+  return { data, currentId: currentPendingRole }
 }
 
-function AgreementCard({ agreement, signatures, role, currentEmployee, onSignComplete }) {
+// --- Compact agreement card (collapsed/expanded) ---
+
+function CompactAgreementCard({ agreement, signatures, role, currentEmployee, onSignComplete, isExpanded, onToggle }) {
   const emp = agreement.employees
   const dept = emp?.departments
   const pendingRole = SIGNING_ROLES_BY_STATUS[agreement.status]
   const canSign = pendingRole === role
 
-  // Manager assigns access groups during approval
   const [selectedGroups, setSelectedGroups] = useState([])
 
   const handleGroupToggle = (groupId) => {
@@ -150,7 +85,6 @@ function AgreementCard({ agreement, signatures, role, currentEmployee, onSignCom
   }
 
   async function handleSign(signatureData) {
-    // Manager saves access groups before signing
     if (role === 'manager') {
       const { error: groupsError } = await saveAccessGroups(agreement.id, selectedGroups)
       if (groupsError) {
@@ -188,81 +122,124 @@ function AgreementCard({ agreement, signatures, role, currentEmployee, onSignCom
     : ''
 
   return (
-    <Card>
-      <div className="space-y-4">
-        {/* Header */}
-        <div className="flex flex-wrap items-start justify-between gap-x-4 gap-y-2">
-          <div className="min-w-0">
-            <h3 className="text-white font-semibold truncate">
+    <div className="rounded-lg bg-[#0b0b0b] border border-neutral-800 glow-box transition-all">
+      {/* Collapsed header — always visible */}
+      <div
+        className="flex items-center gap-3 p-3 cursor-pointer hover:bg-white/[0.02] transition-colors"
+        onClick={onToggle}
+      >
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center gap-2 mb-0.5">
+            <p className="text-sm text-white font-medium truncate">
               {emp ? emp.first_name + ' ' + emp.last_name : 'Unknown'}
-            </h3>
-            <p className="text-sm text-neutral-400">
-              {dept?.name || 'No department'} &middot; FY {agreement.fiscal_year || 'N/A'}
             </p>
+            <MiniProgressDots signatures={signatures} status={agreement.status} />
           </div>
-          <div className="flex items-center gap-2 flex-shrink-0">
-            <Badge variant="accent">
-              {TRACK_LABELS[agreement.track] || agreement.track}
-            </Badge>
-            <Badge variant={STATUS_VARIANTS[agreement.status] || 'neutral'}>
-              {STATUS_LABELS[agreement.status] || agreement.status}
-            </Badge>
-          </div>
+          <p className="text-xs text-neutral-500">{dept?.name || 'No department'}</p>
         </div>
-
-        {/* Timeline */}
-        <div className="border-t border-neutral-800 pt-4">
-          <SignatureTimeline signatures={signatures} status={agreement.status} />
+        <div className="flex items-center gap-2 flex-shrink-0">
+          <Badge variant="accent">{TRACK_LABELS[agreement.track] || agreement.track}</Badge>
+          <StatusBadge status={agreement.status} />
+          <span className="text-xs text-neutral-500">{formatRelativeTime(agreement.updated_at)}</span>
+          {canSign && (
+            <button
+              className={
+                'text-xs px-2.5 py-1 rounded font-medium transition-all ' +
+                (isExpanded
+                  ? 'bg-neutral-800 text-neutral-400'
+                  : 'bg-orange-500/15 text-orange-400 hover:bg-orange-500/25')
+              }
+              onClick={(e) => {
+                e.stopPropagation()
+                onToggle()
+              }}
+            >
+              {isExpanded ? 'Close' : 'Sign'}
+            </button>
+          )}
         </div>
+      </div>
 
-        {/* Manager: assign access groups before signing */}
-        {canSign && role === 'manager' && (
-          <div className="border-t border-neutral-800 pt-4 space-y-3">
-            <div>
-              <h4 className="text-sm font-medium text-white mb-1">Assign ECOS Access Groups</h4>
-              <p className="text-xs text-neutral-500">
-                Select the access levels for this employee. These determine their ECOS system permissions.
+      {/* Expanded detail */}
+      {isExpanded && (
+        <div className="border-t border-neutral-800 p-4 space-y-4">
+          {/* Full timeline */}
+          {(() => {
+            const { data, currentId } = buildTimelineData(signatures, agreement.status)
+            return <WorkflowTimeline steps={TIMELINE_STEPS} data={data} currentId={currentId} />
+          })()}
+
+          {/* Manager: access groups */}
+          {canSign && role === 'manager' && (
+            <div className="border-t border-neutral-800 pt-4 space-y-3">
+              <div>
+                <h4 className="text-sm font-medium text-white mb-1">Assign ECOS Access Groups</h4>
+                <p className="text-xs text-neutral-500">
+                  Select the access levels for this employee.
+                </p>
+              </div>
+              <div className="space-y-3">
+                {accessGroups.map((group) => (
+                  <Checkbox
+                    key={group.id}
+                    name={'mgr-group-' + agreement.id + '-' + group.id}
+                    label={group.name}
+                    description={group.description}
+                    checked={selectedGroups.includes(group.id)}
+                    onChange={() => handleGroupToggle(group.id)}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Signature action */}
+          {canSign && (
+            <div className="border-t border-neutral-800 pt-4">
+              <SignatureBlock
+                signerRole={role}
+                signerName={signerFullName}
+                onSign={handleSign}
+                disabled={false}
+                existingSignature={null}
+              />
+            </div>
+          )}
+
+          {!canSign && pendingRole && agreement.status !== 'completed' && (
+            <div className="border-t border-neutral-800 pt-4">
+              <p className="text-sm text-neutral-500 italic">
+                Waiting for {pendingRole} signature
               </p>
             </div>
-            <div className="space-y-3">
-              {accessGroups.map((group) => (
-                <Checkbox
-                  key={group.id}
-                  name={'mgr-group-' + group.id}
-                  label={group.name}
-                  description={group.description}
-                  checked={selectedGroups.includes(group.id)}
-                  onChange={() => handleGroupToggle(group.id)}
-                />
-              ))}
+          )}
+
+          {agreement.status === 'completed' && (
+            <div className="border-t border-neutral-800 pt-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <svg className="w-4 h-4 text-green-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                    <polyline points="22 4 12 14.01 9 11.01" />
+                  </svg>
+                  <p className="text-sm text-green-400">Agreement fully executed</p>
+                </div>
+                <button
+                  onClick={() => window.print()}
+                  className="text-xs px-3 py-1.5 rounded-lg bg-neutral-800 text-neutral-400 hover:text-white hover:bg-neutral-700 transition-colors no-print"
+                >
+                  Print / Export PDF
+                </button>
+              </div>
             </div>
-          </div>
-        )}
-
-        {/* Action area */}
-        {canSign && (
-          <div className="border-t border-neutral-800 pt-4">
-            <SignatureBlock
-              signerRole={role}
-              signerName={signerFullName}
-              onSign={handleSign}
-              disabled={false}
-              existingSignature={null}
-            />
-          </div>
-        )}
-
-        {!canSign && pendingRole && agreement.status !== 'completed' && (
-          <div className="border-t border-neutral-800 pt-4">
-            <p className="text-sm text-neutral-500 italic">
-              Waiting for {pendingRole} signature
-            </p>
-          </div>
-        )}
-      </div>
-    </Card>
+          )}
+        </div>
+      )}
+    </div>
   )
 }
+
+// --- Main page ---
 
 export default function WorkflowPage() {
   const { currentEmployee, role, loading: roleLoading } = useRole()
@@ -271,13 +248,18 @@ export default function WorkflowPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
+  // UI state
+  const [activeTab, setActiveTab] = useState('action')
+  const [expandedId, setExpandedId] = useState(null)
+  const [search, setSearch] = useState('')
+  const [sortBy, setSortBy] = useState('wait')
+
   const loadData = useCallback(async () => {
     if (!currentEmployee) return
     setLoading(true)
     setError(null)
 
     try {
-      // Fetch agreements relevant to current role
       let allAgreements = []
 
       if (role === 'employee') {
@@ -285,7 +267,6 @@ export default function WorkflowPage() {
         if (err) throw err
         allAgreements = data || []
       } else {
-        // Manager/admin: get pending for their role + their own agreements
         const [pendingResult, ownResult] = await Promise.all([
           getPendingForRole(role),
           getAgreements({ employeeId: currentEmployee.id }),
@@ -297,7 +278,6 @@ export default function WorkflowPage() {
         const pending = pendingResult.data || []
         const own = ownResult.data || []
 
-        // Merge and deduplicate by ID
         const seen = new Set()
         for (const a of [...pending, ...own]) {
           if (!seen.has(a.id)) {
@@ -307,10 +287,8 @@ export default function WorkflowPage() {
         }
       }
 
-      // Exclude drafts from workflow view
       allAgreements = allAgreements.filter((a) => a.status !== 'draft')
 
-      // Fetch signatures for each agreement
       const sigMap = {}
       await Promise.all(
         allAgreements.map(async (a) => {
@@ -333,6 +311,75 @@ export default function WorkflowPage() {
     loadData()
   }, [loadData])
 
+  // Categorize agreements
+  const categorized = useMemo(() => {
+    const action = []
+    const inProgress = []
+    const completed = []
+
+    for (const a of agreements) {
+      const pendingRole = SIGNING_ROLES_BY_STATUS[a.status]
+      if (a.status === 'completed') {
+        completed.push(a)
+      } else if (pendingRole === role) {
+        action.push(a)
+      } else {
+        inProgress.push(a)
+      }
+    }
+
+    return { action, inProgress, completed }
+  }, [agreements, role])
+
+  // Get items for active tab
+  const tabItems = useMemo(() => {
+    let items
+    switch (activeTab) {
+      case 'action': items = categorized.action; break
+      case 'progress': items = categorized.inProgress; break
+      case 'completed': items = categorized.completed; break
+      default: items = agreements
+    }
+
+    // Search filter
+    const term = search.toLowerCase()
+    if (term) {
+      items = items.filter((a) => {
+        const emp = a.employees
+        const name = emp ? (emp.first_name + ' ' + emp.last_name).toLowerCase() : ''
+        const dept = (emp?.departments?.name || '').toLowerCase()
+        return name.includes(term) || dept.includes(term)
+      })
+    }
+
+    // Sort
+    const sorted = [...items]
+    switch (sortBy) {
+      case 'wait':
+        sorted.sort((a, b) => new Date(a.updated_at) - new Date(b.updated_at))
+        break
+      case 'recent':
+        sorted.sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at))
+        break
+      case 'name':
+        sorted.sort((a, b) => {
+          const nameA = a.employees ? a.employees.last_name : ''
+          const nameB = b.employees ? b.employees.last_name : ''
+          return nameA.localeCompare(nameB)
+        })
+        break
+      case 'department':
+        sorted.sort((a, b) => {
+          const deptA = a.employees?.departments?.name || ''
+          const deptB = b.employees?.departments?.name || ''
+          return deptA.localeCompare(deptB)
+        })
+        break
+    }
+
+    return sorted
+  }, [activeTab, categorized, agreements, search, sortBy])
+
   if (roleLoading) {
     return (
       <div className="animate-in">
@@ -344,35 +391,45 @@ export default function WorkflowPage() {
 
   const roleLabel = role ? role.charAt(0).toUpperCase() + role.slice(1) : 'Unknown'
 
-  // Count statuses for header badges
-  const pendingCount = agreements.filter((a) => a.status !== 'completed').length
-  const completedCount = agreements.filter((a) => a.status === 'completed').length
+  const tabs = [
+    { id: 'action', label: 'Needs Action', count: categorized.action.length },
+    { id: 'progress', label: 'In Progress', count: categorized.inProgress.length },
+    { id: 'completed', label: 'Completed', count: categorized.completed.length },
+    { id: 'all', label: 'All' },
+  ]
+
+  function emptyState() {
+    if (activeTab === 'action') {
+      return (
+        <div className="flex items-center gap-2">
+          <svg className="w-5 h-5 text-green-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+            <polyline points="22 4 12 14.01 9 11.01" />
+          </svg>
+          <p className="text-green-400 text-sm">All caught up — nothing needs your signature</p>
+        </div>
+      )
+    }
+    if (activeTab === 'completed') {
+      return <p className="text-neutral-500 text-sm">No completed agreements yet.</p>
+    }
+    if (activeTab === 'progress') {
+      return <p className="text-neutral-500 text-sm">No agreements in progress.</p>
+    }
+    return null
+  }
 
   return (
-    <div className="animate-in">
-      <div className="flex items-baseline gap-3 mb-2 flex-wrap">
-        <h1 className="text-2xl font-bold text-white">Workflow Status</h1>
-        {!loading && agreements.length > 0 && (
-          <div className="flex gap-2">
-            {pendingCount > 0 && (
-              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-orange-500/15 text-orange-400">
-                {pendingCount} pending
-              </span>
-            )}
-            {completedCount > 0 && (
-              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-500/15 text-green-400">
-                {completedCount} completed
-              </span>
-            )}
-          </div>
-        )}
+    <div className="animate-in space-y-6">
+      <div>
+        <h1 className="text-2xl font-bold text-white mb-2">Workflow Status</h1>
+        <p className="text-neutral-400">
+          Viewing as <span className="text-white font-medium">{roleLabel}</span>
+          {currentEmployee && (
+            <span> — {currentEmployee.first_name} {currentEmployee.last_name}</span>
+          )}
+        </p>
       </div>
-      <p className="text-neutral-400 mb-8">
-        Viewing as <span className="text-white font-medium">{roleLabel}</span>
-        {currentEmployee && (
-          <span> &mdash; {currentEmployee.first_name} {currentEmployee.last_name}</span>
-        )}
-      </p>
 
       {loading ? (
         <Card>
@@ -395,7 +452,7 @@ export default function WorkflowPage() {
               </p>
             ) : role === 'manager' ? (
               <p className="text-neutral-500 text-sm">
-                No agreements are pending your review. When employees submit agreements, they&rsquo;ll appear here for your signature.
+                No agreements are pending your review. When employees submit agreements, they'll appear here for your signature.
               </p>
             ) : (
               <p className="text-neutral-500 text-sm">
@@ -405,18 +462,48 @@ export default function WorkflowPage() {
           </div>
         </Card>
       ) : (
-        <div className="space-y-4">
-          {agreements.map((a) => (
-            <AgreementCard
-              key={a.id}
-              agreement={a}
-              signatures={signaturesMap[a.id] || []}
-              role={role}
-              currentEmployee={currentEmployee}
-              onSignComplete={loadData}
+        <>
+          {/* Tabs */}
+          <TabBar tabs={tabs} active={activeTab} onChange={(id) => { setActiveTab(id); setExpandedId(null) }} />
+
+          {/* Search + Sort */}
+          <div className="flex flex-col sm:flex-row gap-3">
+            <TextInput
+              name="workflow-search"
+              placeholder="Search by name or department..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="flex-1"
             />
-          ))}
-        </div>
+            <Select
+              name="workflow-sort"
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+              options={SORT_OPTIONS}
+              className="sm:w-40"
+            />
+          </div>
+
+          {/* Cards grid */}
+          {tabItems.length === 0 ? (
+            <Card>{search ? <p className="text-neutral-500 text-sm">No agreements match "{search}"</p> : emptyState()}</Card>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {tabItems.map((a) => (
+                <CompactAgreementCard
+                  key={a.id}
+                  agreement={a}
+                  signatures={signaturesMap[a.id] || []}
+                  role={role}
+                  currentEmployee={currentEmployee}
+                  onSignComplete={() => { setExpandedId(null); loadData() }}
+                  isExpanded={expandedId === a.id}
+                  onToggle={() => setExpandedId(expandedId === a.id ? null : a.id)}
+                />
+              ))}
+            </div>
+          )}
+        </>
       )}
     </div>
   )

@@ -110,41 +110,41 @@ Plans:
 **Depends on**: Phase 6 (existing dashboard)
 
 Plans:
-- [ ] 08-01: Tab layout + data hook extraction — TabBar component, useDashboardData hook, 3-tab layout
-- [ ] 08-02: Compact approval cards with quick-sign — accordion cards, 2-col grid
-- [ ] 08-03: Paginated audit trail — extracted component, pagination, date range filters
+- [x] 08-01: Tab layout + data hook extraction — TabBar component, useDashboardData hook, 3-tab layout
+- [x] 08-02: Compact approval cards with quick-sign — accordion cards, 2-col grid
+- [x] 08-03: Paginated audit trail — extracted component, pagination, date range filters
 
 ### Phase 9: Workflow Page Redesign
 **Goal**: Make WorkflowPage scannable at 10+ items with status tabs, compact cards, search/sort
 **Depends on**: Phase 8 (TabBar component)
 
 Plans:
-- [ ] 09-01: Status tabs + compact agreement cards — filter tabs, MiniProgressDots, accordion cards
-- [ ] 09-02: Workflow search + sort — search bar, sort dropdown, per-tab empty states
+- [x] 09-01: Status tabs + compact agreement cards — filter tabs, MiniProgressDots, accordion cards
+- [x] 09-02: Workflow search + sort — search bar, sort dropdown, per-tab empty states
 
 ### Phase 10: Form Experience Improvements
 **Goal**: Progressive disclosure stepper and draft auto-save for the agreement form
 **Depends on**: Phase 3 (existing form)
 
 Plans:
-- [ ] 10-01: Stepper form with progress indicator — 4-step stepper, next/back nav
-- [ ] 10-02: Draft auto-save + resume — localStorage auto-save, resume/discard UI
+- [x] 10-01: Stepper form with progress indicator — 4-step stepper, next/back nav
+- [x] 10-02: Draft auto-save + resume — localStorage auto-save, resume/discard UI
 
 ### Phase 11: Demo Scale + Visualization
 **Goal**: 50+ seed records for realistic scale demo, enhanced compliance visualization
 **Depends on**: Phase 8 (dashboard tabs)
 
 Plans:
-- [ ] 11-01: Expanded seed data — 24 employees, 6 departments, 55+ agreements
-- [ ] 11-02: Department compliance visualization + expiring soon grouping
+- [x] 11-01: Expanded seed data — 24 employees, 6 departments, 53 agreements
+- [x] 11-02: Department compliance visualization + expiring soon grouping
 
 ### Phase 12: Platform Patterns + Polish
 **Goal**: Extract reusable components, responsive polish, print export
 **Depends on**: Phase 9 (workflow components)
 
 Plans:
-- [ ] 12-01: Component library extraction — WorkflowTimeline, StatusBadge, barrel exports
-- [ ] 12-02: Responsive polish + print export — @media print, Download PDF button
+- [x] 12-01: Component library extraction — WorkflowTimeline, StatusBadge, barrel exports
+- [x] 12-02: Responsive polish + print export — @media print, Download PDF button
 
 ## Progress
 
@@ -160,12 +160,14 @@ Plans:
 | 6. Admin Dashboard | 3/3 | Complete | 2026-02-06 |
 | 7. Deployment & Polish | 3/3 | Complete | 2026-02-07 |
 
-**Milestone 2 (UX Overhaul) — In Progress:**
+**Milestone 2 (UX Overhaul) — Complete:**
 
 | Phase | Plans Complete | Status | Completed |
 |-------|---------------|--------|-----------|
-| 8. Dashboard UX Overhaul | 0/3 | In Progress | — |
-| 9. Workflow Page Redesign | 0/2 | Pending | — |
-| 10. Form Experience | 0/2 | Pending | — |
-| 11. Demo Scale + Viz | 0/2 | Pending | — |
-| 12. Platform + Polish | 0/2 | Pending | — |
+| 8. Dashboard UX Overhaul | 3/3 | Complete | 2026-02-17 |
+| 9. Workflow Page Redesign | 2/2 | Complete | 2026-02-17 |
+| 10. Form Experience | 2/2 | Complete | 2026-02-17 |
+| 11. Demo Scale + Viz | 2/2 | Complete | 2026-02-17 |
+| 12. Platform + Polish | 2/2 | Complete | 2026-02-17 |
+
+See `.planning/OVERHAUL-SUMMARY.md` for detailed session reference.
